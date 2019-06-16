@@ -26,9 +26,13 @@ target 'vino' do
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
   pod 'RNCAsyncStorage', :path => '../node_modules/@react-native-community/async-storage'
-
+  pod 'Firebase/Core'
+  pod 'Firebase/MLVision'
+  pod 'Firebase/MLVisionTextModel'
   pod 'GoogleSignIn', '~> 4.4.0'
 
   pod 'RNKeychain', :path => '../node_modules/react-native-keychain'
+
+  pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
 end

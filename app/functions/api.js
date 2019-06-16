@@ -1,9 +1,10 @@
-import {setUser,setPairs,setMedications} from '../redux/actions'
+import {setUser,setWines,setCellars} from '../redux/actions'
 import {getCredentials,rememberEmailPassword} from './keychainFunctions'
 
 // import io from 'socket.io-client';
 const URL = "http://localhost:3001"
 let token="";
+let accessToken = "";
 // var socket;
 function deleteToken(){
   console.log("token reset")
@@ -23,19 +24,55 @@ function deleteToken(){
 // //   })
 // // }
 //
-// function fetchWines(){
-//   return function(dispatch) {
-//     return new Promise(async function(resolve,reject){
-//       fetchData("GET","/wines")
-//       .then(array=>{
-//         console.log({array})
-//         dispatch(getWines(array))
-//         resolve();
-//       })
-//       .catch(e=>reject(e))
-//     })
-//   }
-// }
+function fetchWines(){
+  return function(dispatch) {
+    return new Promise(async function(resolve,reject){
+      fetchData("GET","/wines")
+      .then(array=>{
+        dispatch(setWines(array))
+        resolve();
+      })
+      .catch(e=>reject(e))
+    })
+  }
+}
+function saveWine(wine,wineId=''){
+  return function(dispatch) {
+    return new Promise(async function(resolve,reject){
+      fetchData("POST","/wines/"+wineId,{},wine)
+      .then(array=>{
+        dispatch(setWines([array]))
+        resolve();
+      })
+      .catch(e=>reject(e))
+    })
+  }
+}
+function saveCellar(cellar,cellarId=''){
+  return function(dispatch) {
+    return new Promise(async function(resolve,reject){
+      fetchData("POST","/cellars/"+cellarId,{},cellar)
+      .then(array=>{
+        dispatch(setCellars([array]))
+        resolve();
+      })
+      .catch(e=>reject(e))
+    })
+  }
+}
+function fetchCellars(){
+  return function(dispatch) {
+    return new Promise(async function(resolve,reject){
+      fetchData("GET","/cellars")
+      .then(array=>{
+        console.log(array)
+        dispatch(setCellars(array))
+        resolve();
+      })
+      .catch(e=>reject(e))
+    })
+  }
+}
 //
 // function getPairs(){
 //   console.log('getPairs')
@@ -103,12 +140,11 @@ function login(data){
     } else {
       accessToken  = data.accessToken
     }
-    console.log(data)
     fetchData("GET","/auth/facebook/token",{access_token:accessToken})
     .then(async function(res){
-      console.log(res)
       if (data) await rememberEmailPassword(res.userId,res.accessToken)
       token = res.token;
+      // accessToken = res.token
       // socket = io(URL,{
       //   query : {token},
       //   secure: true,
@@ -156,7 +192,8 @@ function fetchData( method, path, params, body){
           let credentials;
           try{
             credentials = await getCredentials()
-            await login(credentials.username,credentials.password)
+            console.log(credentials)
+            await login({accessToken:credentials.password})
             return fetchData(method,path,params,body)
           }catch(e){
             reject("unauthorized, can't re-login")
@@ -189,4 +226,4 @@ function fetchData( method, path, params, body){
   })//end promise
 }
 //
-export {fetchData, login,getUser}
+export {fetchCellars,fetchData, login,getUser,saveCellar,saveWine,fetchWines}

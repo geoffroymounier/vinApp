@@ -1,0 +1,11 @@
+{
+  "emptyCave" : "Bah ma tortue, elle est bien vide cette cave ! Si on commencait par y ajouter un vin ?",
+  "leaveIt" : "Deconnexion",
+  "sureToLeave" : "Tu es sûre de vouloir te déconnecter ? On se revoit vite hein ?",
+  "addNewWine" : "Je le sais ça !",
+  "noAppelation":"C'est dommage ma pépée, il n'y a pas d'appelation à ton vin !",
+  "noColor":"Il est de quel couleur ton vin, tu vas plus t'y retrouver !",
+  "region":"Une région c'est la BASE :D, mets en une ! ",
+  "confirmSave":"Tu confirmes ces modifications !",
+  "confirmSaveMsg":"On n'est jamais trop prudent :-)"
+}

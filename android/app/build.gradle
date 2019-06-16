@@ -138,6 +138,8 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-firebase-mlkit')
+    implementation project(':react-native-image-picker')
     implementation project(':react-native-keychain')
     implementation project(':react-native-fbsdk')
     implementation project(':react-native-google-signin')

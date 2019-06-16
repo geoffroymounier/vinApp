@@ -5,18 +5,36 @@ import {DrawerItems, SafeAreaView, createStackNavigator, createDrawerNavigator ,
 import Login from '../views/login'
 import AuthLoading from '../views/authLoading'
 // import Filter from '../views/filter'
-// import Collection from '../views/collection'
-// import EditFile from '../views/editFile'
+import Cellars from '../views/cellars'
+import Wines from '../views/wines'
+import EditWine from '../views/editWine'
+import EditCellar from '../views/editCellar'
+import Region from '../components/options/region'
+import Country from '../components/options/country'
+import Appelation from '../components/options/appelation'
+import Cepage from '../components/options/cepage'
+import Annee from '../components/options/annee'
+import Accords from '../components/options/accords'
+import Aromes from '../components/options/aromes'
 // import Profile from '../views/profile'
 
 
 
-// const TabStackWine = createStackNavigator({
-//       collection:  Collection,
-//       editFile: EditFile,
-//       filter: Filter,
-//       profile: Profile
-// });
+const TabStackWine = createStackNavigator({
+      cellars:  Cellars,
+      wines : Wines,
+      editWine: EditWine,
+      editCellar: EditCellar,
+      region:Region,
+      country:Country,
+      appelation:Appelation,
+      cepage: Cepage,
+      annee : Annee,
+      accords : Accords,
+      aromes : Aromes
+      // filter: Filter,
+      // profile: Profile
+});
 const LoginStack = createStackNavigator({
       login:  Login
 });
@@ -29,7 +47,7 @@ export default createAppContainer(createSwitchNavigator(
   {
     AuthLoading: AuthLoadingStack,
     Login: LoginStack,
-    // TabStackWine: TabStackWine,
+    TabStackWine: TabStackWine,
 
   },
   {

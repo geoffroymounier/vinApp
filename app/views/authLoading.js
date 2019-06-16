@@ -28,17 +28,17 @@ class AuthLoading extends React.Component {
 
 
       login().then(()=>{
-        this.props.getUser().then((user)=>{
-          this.props.navigation.navigate("login")
+        // this.props.getUser().then((user)=>{
+          this.props.navigation.navigate("cellars")
         }).catch(e=>{                               //can't get user : should be carer
           this.props.navigation.navigate("login")
         })
-      }).catch(e=>{                             //can't log with this keychain
-        console.log("  can't log: "+e)
-        console.log("  resetKeychain, to auth")
-        resetKeychain()
-        this.props.navigation.navigate("login")
-      })
+      // }).catch(e=>{                             //can't log with this keychain
+      //   console.log("  can't log: "+e)
+      //   console.log("  resetKeychain, to auth")
+      //   resetKeychain()
+      //   this.props.navigation.navigate("login")
+      // })
 
   }
 

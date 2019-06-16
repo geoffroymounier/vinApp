@@ -3,7 +3,6 @@ import React from "react";
 import { AccessToken, LoginManager } from 'react-native-fbsdk';
 import {AsyncStorage,Linking,Animated,Platform, FlatList,TouchableHighlight,StyleSheet, Text, View,Image,ScrollView,KeyboardAvoidingView,TextInput,Picker,TouchableOpacity,Dimensions} from 'react-native';
 import {bindActionCreators} from 'redux'
-// import {getCredentials,resetKeychain} from '../functions/keychainFunctions'
 import {login} from '../functions/api'
 
 import {connect} from 'react-redux'
@@ -22,7 +21,8 @@ async function facebookLogin() {
 
     if (result.isCancelled) {
       // handle this however suites the flow of your app
-      throw new Error('User cancelled request');
+      console.log('User cancelled request');
+      return
     }
 
     console.log(`Login success with permissions: ${result.grantedPermissions.toString()}`);

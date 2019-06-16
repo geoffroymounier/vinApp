@@ -3,6 +3,8 @@ package com.vino;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.mlkit.RNMlKitPackage;
+import com.imagepicker.ImagePickerPackage;
 import com.oblador.keychain.KeychainPackage;
 import com.facebook.reactnative.androidsdk.FBSDKPackage;
 import co.apptailor.googlesignin.RNGoogleSigninPackage;
@@ -26,6 +28,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNMlKitPackage(),
+            new ImagePickerPackage(),
             new KeychainPackage(),
             new FBSDKPackage(),
             new RNGoogleSigninPackage()
