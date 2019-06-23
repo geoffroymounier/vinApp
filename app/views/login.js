@@ -17,31 +17,29 @@ function matchDispatchToProps(dispatch){
 const { height, width } = Dimensions.get('window');
 async function facebookLogin() {
   try {
+    // RNFBSDK  asks the user to authorize and share email and publicprofile
     const result = await LoginManager.logInWithReadPermissions(['public_profile', 'email']);
 
+    // refusing to share
     if (result.isCancelled) {
-      // handle this however suites the flow of your app
       console.log('User cancelled request');
       return
     }
 
     console.log(`Login success with permissions: ${result.grantedPermissions.toString()}`);
 
-    // get the access token
+    // here we retrieve the accessToken from facebook
     const data = await AccessToken.getCurrentAccessToken();
-    await login(data)
     if (!data) {
       // handle this however suites the flow of your app
       throw new Error('Something went wrong obtaining the users access token');
     }
+
+    // let's login function with our fresh token
+    await login(data)
+
     console.log(data)
-    // create a new firebase credential with the token
-    // const credential = firebase.auth.FacebookAuthProvider.credential(data.accessToken);
 
-    // login with credential
-    // const firebaseUserCredential = await firebase.auth().signInWithCredential(credential);
-
-    // console.warn(JSON.stringify(firebaseUserCredential.user.toJSON()))
   } catch (e) {
     console.error(e);
   }

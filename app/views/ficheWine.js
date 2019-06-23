@@ -9,7 +9,7 @@ import RNPickerSelect from 'react-native-picker-select';
 import ManagePhoto from '../components/modals/managePhoto'
 import regionArray from '../components/array/area'
 import raw from '../components/array/raw'
-import {images,editFile} from 'styles'
+import {images,ficheWine} from 'styles'
 import {country_code,getCountryCode} from '../components/array/country_code'
 import alasql from 'alasql'
 import {carafageArray,makeTypologieArray,makePriceArray,makeRegionArray,makeStockArray,terrainArray,makeYearArray,lastYearArray,apogeeArray} from '../components/array/pickers'
@@ -32,7 +32,7 @@ function matchDispatchToProps(dispatch){
   return bindActionCreators({setWine,saveWine}, dispatch)
 }
 
-class EditFile extends React.Component {
+class Fiche extends React.Component {
   static navigationOptions = ({ navigation  }) => {
     const { params = {} } = navigation.state;
     return {
@@ -152,100 +152,70 @@ class EditFile extends React.Component {
 
         <View style={{...styles.container,paddingVertical:10}}>
           <View style={styles.container}>
-            <View style={editFile.cartoucheRow}>
-              <TouchableOpacity onPress={()=>this.setState({modalColor:'modalColor'})}  style={editFile.cartoucheLeft}>
-                <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
-                <Text style={{...styles.textInputPicker,flexWrap:'wrap',paddingRight:30}}>{(colors[color] || {}).label || 'Couleur'}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={editFile.cartoucheRight}
-                onPress={()=>this.refs.typologie.setState({showPicker:true})} >
-                <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
-                <View style={{flex:1,flexDirection:'row'}}>
-                  <RNPickerSelect
-                     placeholder={{label: 'Typologie',value: ''}}
-                     textInputProps={styles.textInputPicker}
-                     style={pickerStyle}
-                     ref={'typologie'}
-                     doneText={'OK'}
-                     items={makeTypologieArray()}
-                     onValueChange={(typologie) => this.props.setWine({typologie})}
-                     value={typologie}
-                   />
-                </View>
-              </TouchableOpacity>
+            <View style={ficheWine.cartoucheRow}>
+              <View style={{...ficheWine.cartoucheRight,minHeight:50}}>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{'Couleur'}</Text>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{(colors[color] || {}).label || 'Couleur'}</Text>
+              </View>
+              <View style={{...ficheWine.cartoucheRight,minHeight:50}}>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{"Typologie"}</Text>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{typologie}</Text>
+              </View>
+              <View style={{...ficheWine.cartoucheRight,minHeight:50}}>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{"Apogée"}</Text>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{apogee}</Text>
+              </View>
+              <View style={{...ficheWine.cartoucheRight,minHeight:50}}>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{"Garde"}</Text>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{before}</Text>
+              </View>
             </View>
-            <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center',alignSelf:'center',padding:5}}>
-              <TouchableOpacity onPress={() => this.props.navigation.push('country')}  style={editFile.cartoucheLeft}>
-                <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
-                <Text style={{...styles.textInputPicker,flexWrap:'wrap',paddingRight:30}}>{country || 'Pays'}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => this.props.navigation.push('region',{country})}  style={editFile.cartoucheRight}>
-                <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
-                <Text style={{...styles.textInputPicker,flexWrap:'wrap',paddingRight:30}}>{region || 'Région'}</Text>
-              </TouchableOpacity>
+            <View style={ficheWine.cartoucheRow}>
+              <View style={ficheWine.cartoucheLeft}>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{"Pays"}</Text>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{country}</Text>
+              </View>
+              <View style={ficheWine.cartoucheLeft}>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{"Région"}</Text>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{region}</Text>
+              </View>
             </View>
-            <View style={editFile.cartoucheRow}>
-              <TouchableOpacity onPress={() => this.props.navigation.push('annee',{keyValue:'apogee'})}  style={editFile.cartoucheLeft}>
-                <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
-                <Text style={{...styles.textInputPicker,flexWrap:'wrap',paddingRight:30}}>{apogee || "Apogée"}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => this.props.navigation.push('annee',{keyValue:'before'})}  style={editFile.cartoucheRight}>
-                <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
-                <Text style={{...styles.textInputPicker,flexWrap:'wrap',paddingRight:30}}>{before || "Jusqu'à"}</Text>
-              </TouchableOpacity>
+            <View style={ficheWine.cartoucheRow}>
+              <View style={ficheWine.cartoucheLeft}>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{"Carafage"}</Text>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{carafage}</Text>
+              </View>
+              <View style={ficheWine.cartoucheRight}>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{"Alcool"}</Text>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}></Text>
+              </View>
+              <View style={ficheWine.cartoucheRight}>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{"Prix"}</Text>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{price}</Text>
+              </View>
+              <View style={ficheWine.cartoucheRight}>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{"Stock"}</Text>
+                <Text style={{...styles.textInputPicker,flexWrap:'wrap'}}>{stock}</Text>
+              </View>
             </View>
-            <View style={editFile.cartoucheRow}>
-            <TouchableOpacity onPress={() => this.refs.carafage.setState({showPicker:true})}  style={editFile.cartoucheLeft}>
-              <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
-              <RNPickerSelect
-                 placeholder={{label: 'Carafage',value: ''}}
-                 textInputProps={styles.textInputPicker}
-                 style={pickerStyle}
-                 ref={'carafage'}
-                 doneText={'OK'}
-                 items={carafageArray()}
-                 onValueChange={(carafage) => this.props.setWine({carafage})}
-                 value={carafage}
-               />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.refs.temperature.setState({showPicker:true})}  style={editFile.cartoucheRight}>
-              <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
-              <RNPickerSelect
-                 placeholder={{label: 'Température',value: ''}}
-                 textInputProps={styles.textInputPicker}
-                 style={pickerStyle}
-                 ref={'temperature'}
-                 doneText={'OK'}
-                 items={carafageArray()}
-                 onValueChange={(carafage) => this.props.setWine({temperature})}
-                 value={carafage}
-               />
-            </TouchableOpacity>
-          </View>
           </View>
         </View>
 
         <View style={{...styles.container,flexDirection:'row',alignItems:'flex-start'}}>
           <View style={{...styles.container}}>
           <View style={{borderTopWidth:5,borderBottomWidth:5,paddingVertical:5,borderRadius:0,borderColor:(colors[color] || {}).color || '#515151' ,width:"100%"}}>
-              <TouchableOpacity onPress={()=>this.props.navigation.push('appelation')} style={{...styles.TouchableOpacity,borderBottomWidth:0}}>
+              <View  style={{...styles.TouchableOpacity,borderBottomWidth:0}}>
                 <Text
                   style={styles.appelation} value={domain}
                   >{appelation || "Indication Géographique" }</Text>
-               </TouchableOpacity>
-             <TouchableOpacity onPress={()=>this.refs.domain.focus()} style={{...styles.TouchableOpacity,borderBottomWidth:0}}>
-               <TextInput placeholderTextColor = "#515151"
-                 autoCapitalize='words'
-                 ref='domain'
-                 placeholder={dialog.domain.placeholder}
-                 style={styles.appelation} value={domain}
-                 onChangeText={(domain)=>this.props.setWine({domain})}/>
-              </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.props.navigation.push('annee',{keyValue:'annee'})} style={{...styles.TouchableOpacity,borderBottomWidth:0}}>
+               </View>
+             <View  style={{...styles.TouchableOpacity,borderBottomWidth:0}}>
+               <Text style={styles.appelation}>{domain}</Text>
+            </View>
+            <View style={{...styles.TouchableOpacity,borderBottomWidth:0}}>
               <Text style={styles.appelation}>{annee || "Annee"}</Text>
-          </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.props.navigation.push('cepage')} style={{...styles.TouchableOpacity,borderBottomWidth:0}}>
+          </View>
+            <View style={{...styles.TouchableOpacity,borderBottomWidth:0}}>
               <View  style={{flexDirection:'row',alignSelf:'baseline',flexWrap: "wrap",alignItems:'center'}}>
               <Text style={styles.undertitle}>{cepageValues.placeholder}</Text>
               {cepage.map((e,i) => (
@@ -255,81 +225,8 @@ class EditFile extends React.Component {
               )
               )}
             </View>
-          </TouchableOpacity>
-
           </View>
-          <TouchableOpacity onPress={()=>this.refs.price.setState({showPicker:true})} style={{...styles.TouchableOpacity}}>
-              <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-              <Text style={{...styles.title}}>Prix : </Text>
-                <RNPickerSelect
-                   placeholder={{label: 'Prix',value: ''}}
-                   textInputProps={{display:'none'}}
-                   onDownArrow = {()=>this.refs.stocks.setState({showPicker:true})}
-                   onUpArrow = {()=>this.refs.terrain.setState({showPicker:true})}
-                   style={{...styles.title}}
-                   doneText={'OK'}
-                   ref='price'
-                   style={{viewContainer:{alignSelf:'center'}}}
-                   items={makePriceArray()}
-                   onValueChange={(price) => this.props.setWine({price})}
-                   value={price}
-                 />
-              <MultiSlider
-                  min={0}
-                  values={[price||0]}
-                  onDownArrow = {()=>this.refs.stocks.setState({showPicker:true})}
-                  onUpArrow = {()=>this.refs.terrain.setState({showPicker:true})}
-                  sliderLength={250}
-                  enabledOne={true}
-                  isMarkersSeparated={true}
-                  customMarkerLeft={(e) => <CustomMarker
-                  active = {true}
-                    suffix={'€'}
-                   currentValue={e.currentValue}/>
-                   }
-                  max={100}
-                  onValuesChangeFinish={(e)=>this.props.setWine({price:e[0]})}
-                />
-            </View>
-
-            </TouchableOpacity>
-            <TouchableOpacity onPress={()=>this.refs.stocks.setState({showPicker:true})} style={{...styles.TouchableOpacity}}>
-                <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                  <Text style={{...styles.title}}>Stock : </Text>
-                  <RNPickerSelect
-                     placeholder={{label: 'En Stock',value: ''}}
-                     onUpArrow = {()=>this.refs.price.setState({showPicker:true})}
-                     textInputProps={{display:'none'}}
-                     style={{...styles.title}}
-                     doneText={'OK'}
-                     ref='stocks'
-                     style={{viewContainer:{alignSelf:'center'}}}
-                     items={makeStockArray()}
-                     onValueChange={(stock) => this.props.setWine({stock})}
-                     value={stock}
-                   />
-                  <MultiSlider
-                    min={0}
-                    onUpArrow = {()=>this.refs.price.setState({showPicker:true})}
-                    values={[stock||0]}
-                    sliderLength={250}
-                    enabledOne={true}
-                    isMarkersSeparated={true}
-                    customMarkerLeft={(e) => <CustomMarker
-                    active = {true}
-                     currentValue={e.currentValue}/>
-                     }
-                    max={50}
-                    onValuesChangeFinish={(e)=>this.props.setWine({stock:e[0]})}
-                  />
-              </View>
-              </TouchableOpacity>
-           {/* <View style={{flex:4,flexDirection:'row',justifyContent:'flex-start',alignItems:'center',height:35,margin:0}}>
-             <Text>Vendu par : </Text>
-           <TextInput placeholder={'Entreprise'} onChangeText={(vendor) => this.setState({wine:{...this.state.wine,vendor}})}/>
-          </View> */}
-
-
+          </View>
           <View style={{...styles.container,flexDirection:'row',width:'100%',alignItems:'flex-start',backgroundColor:"#eee5da",
 
             }}>
@@ -458,9 +355,7 @@ const styles = StyleSheet.create({
 
   textInputPicker:{
     color:'#262626',
-    // padding:10,
-
-    // paddingBottom:8,
+    textAlign:'center',
     fontSize:16,
     justifyContent:'center',
     alignSelf:'center',
@@ -512,4 +407,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default connect(mapStateToProps,matchDispatchToProps)(EditFile)
+export default connect(mapStateToProps,matchDispatchToProps)(Fiche)

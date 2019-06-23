@@ -1,22 +1,23 @@
 import React, {Component} from 'react';
-import {FlatList,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
+import {FlatList,Button,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
 import Checkbox from '../markers/checkbox.js';
 import {SafeAreaView} from 'react-navigation'
 import Icon from '../markers/icon.js';
 import {makeYearArray} from '../array/pickers'
 import {bindActionCreators} from 'redux'
-import {setWine} from '../../redux/actions'
+import {setWine,setSearch} from '../../redux/actions'
 import {connect} from 'react-redux'
 function mapStateToProps(state,props){
   let key = props.navigation.getParam('keyValue')
   return{
     selected : state.wine[key],
     annee : state.wine.annee,
+    search : props.navigation.getParam('search') == true,
     apogee : state.wine.apogee
   }
 }
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({setWine}, dispatch)
+  return bindActionCreators({setWine,setSearch}, dispatch)
 }
 class MyListItem extends React.PureComponent {
   _onPress = () => {
@@ -66,7 +67,7 @@ class Annee extends React.PureComponent {
     Keyboard.dismiss()
     let keyValue = this.props.navigation.getParam('keyValue')
 
-    this.props.setWine({[keyValue]:title})
+    this.props.search ? this.props.setSearch({[keyValue]:title}) : this.props.setWine({[keyValue]:title})
     this.props.navigation.goBack()
   };
 
@@ -92,6 +93,10 @@ class Annee extends React.PureComponent {
               keyExtractor={this._keyExtractor}
               renderItem={this._renderItem}
             />
+            <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Fermer"
+          />
         </SafeAreaView>
     );
   }

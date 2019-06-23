@@ -1,4 +1,4 @@
-import {setUser,setWines,setCellars} from '../redux/actions'
+import {setUser,setWines,setCellars,setResults} from '../redux/actions'
 import {getCredentials,rememberEmailPassword} from './keychainFunctions'
 
 // import io from 'socket.io-client';
@@ -24,10 +24,36 @@ function deleteToken(){
 // //   })
 // // }
 //
-function fetchWines(){
+function textSearch(query = {}){
   return function(dispatch) {
     return new Promise(async function(resolve,reject){
-      fetchData("GET","/wines")
+
+      fetchData("GET","/textSearch/",query)
+      .then(array=>{
+        dispatch(setResults(array))
+        resolve();
+      })
+      .catch(e=>reject(e))
+    })
+  }
+}
+function fetchSearch(query = {}){
+  return function(dispatch) {
+    return new Promise(async function(resolve,reject){
+
+      fetchData("GET","/wines/",query)
+      .then(array=>{
+        dispatch(setResults(array))
+        resolve();
+      })
+      .catch(e=>reject(e))
+    })
+  }
+}
+function fetchWines(wineId = '',query = {}){
+  return function(dispatch) {
+    return new Promise(async function(resolve,reject){
+      fetchData("GET","/wines/" + wineId,query)
       .then(array=>{
         dispatch(setWines(array))
         resolve();
@@ -93,6 +119,7 @@ function getUser(){
     return new Promise(async function(resolve,reject){
       fetchData("GET","/user")
       .then(user=>{
+        console.log(user)
         if (!user){
           reject(e) //don't propagate null to redux. the case is treated in front (go to profileForm)
           return;
@@ -226,4 +253,4 @@ function fetchData( method, path, params, body){
   })//end promise
 }
 //
-export {fetchCellars,fetchData, login,getUser,saveCellar,saveWine,fetchWines}
+export {textSearch,fetchSearch,fetchCellars,fetchData, login,getUser,saveCellar,saveWine,fetchWines}

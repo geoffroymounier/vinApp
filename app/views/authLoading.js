@@ -28,6 +28,7 @@ class AuthLoading extends React.Component {
 
 
       login().then(()=>{
+          this.props.getUser()
         // this.props.getUser().then((user)=>{
           this.props.navigation.navigate("cellars")
         }).catch(e=>{                               //can't get user : should be carer

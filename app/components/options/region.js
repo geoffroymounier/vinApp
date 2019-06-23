@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {FlatList,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
+import {FlatList,View,Button,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
 import Checkbox from '../markers/checkbox.js';
 import {SafeAreaView} from 'react-navigation'
 import Icon from '../markers/icon.js';
@@ -7,7 +7,7 @@ import SearchBar from '../markers/searchbar.js';
 import raw from '../array/raw'
 import alasql from 'alasql'
 import {bindActionCreators} from 'redux'
-import {setWine} from '../../redux/actions'
+import {setWine,setSearch} from '../../redux/actions'
 import {connect} from 'react-redux'
 function mapStateToProps(state,props){
 
@@ -16,11 +16,12 @@ function mapStateToProps(state,props){
 
   return{
     regions : regions,
+    search : props.navigation.getParam('search') == true,
     selected : state.wine.region
   }
 }
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({setWine}, dispatch)
+  return bindActionCreators({setWine,setSearch}, dispatch)
 }
 class MyListItem extends React.PureComponent {
   _onPress = () => {
@@ -45,6 +46,7 @@ class MyListItem extends React.PureComponent {
 
 
 class Region extends React.PureComponent {
+
   constructor(props){
     super(props)
     this.state = {search:'',selected: ''};
@@ -62,7 +64,7 @@ class Region extends React.PureComponent {
       region:(id == -1) ? null : this.props.regions[id].region,
       country : (id == -1) ? null : this.props.regions[id].country,
     }
-    this.props.setWine(newWine)
+    this.props.search ? this.props.setSearch(newWine) : this.props.setWine(newWine)
     this.props.navigation.goBack()
   };
 
@@ -83,7 +85,7 @@ class Region extends React.PureComponent {
       <SafeAreaView style={{flex:1}}>
           <View
             style={{
-
+              // flex:1,
               flexDirection:'row',
               alignItems: "center",
             }}>
@@ -109,6 +111,10 @@ class Region extends React.PureComponent {
               keyExtractor={this._keyExtractor}
               renderItem={this._renderItem}
             />
+            <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Fermer"
+          />
         </SafeAreaView>
     );
   }

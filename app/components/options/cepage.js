@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {FlatList,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
+import {FlatList,Button,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
 import Checkbox from '../markers/checkbox.js';
 import {SafeAreaView} from 'react-navigation'
 import Icon from '../markers/icon.js';
@@ -7,7 +7,7 @@ import SearchBar from '../markers/searchbar.js';
 import raw from '../array/cepage'
 import alasql from 'alasql'
 import {bindActionCreators} from 'redux'
-import {setWine} from '../../redux/actions'
+import {setWine,setSearch} from '../../redux/actions'
 import {connect} from 'react-redux'
 function mapStateToProps(state,props){
 
@@ -18,11 +18,12 @@ function mapStateToProps(state,props){
 
   return{
     cepages : cepages,
+    search : props.navigation.getParam('search') == true,
     selected : state.wine.cepage || []
   }
 }
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({setWine}, dispatch)
+  return bindActionCreators({setWine,setSearch}, dispatch)
 }
 class MyListItem extends React.PureComponent {
   _onPress = () => {
@@ -60,14 +61,14 @@ class Cepage extends React.PureComponent {
 
     Keyboard.dismiss()
     if (id == -1) {
-      this.props.setWine({cepage:[]})
+      this.props.search ? this.props.setSearch({cepage:[]}) : this.props.setWine({cepage:[]})
       return
     }
     let selected = [...this.props.selected]
     let index = selected.findIndex(array => array == this.props.cepages[id].cepage)
     index == -1  ? selected.splice(selected.length, 0,this.props.cepages[id].cepage ) : selected.splice(index, 1 )
 
-    this.props.setWine({cepage:selected})
+    this.props.search ? this.props.setSearch({cepage:selected}) : this.props.setWine({cepage:selected})
   };
 
   _renderItem = ({item}) => (
@@ -112,6 +113,10 @@ class Cepage extends React.PureComponent {
               keyExtractor={this._keyExtractor}
               renderItem={this._renderItem}
             />
+            <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Fermer"
+          />
         </SafeAreaView>
     );
   }

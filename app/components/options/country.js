@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {FlatList,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
+import {FlatList,Button,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
 import Checkbox from '../markers/checkbox.js';
 import {SafeAreaView} from 'react-navigation'
 import Icon from '../markers/icon.js';
@@ -7,18 +7,19 @@ import SearchBar from '../markers/searchbar.js';
 import raw from '../array/raw'
 import alasql from 'alasql'
 import {bindActionCreators} from 'redux'
-import {setWine} from '../../redux/actions'
+import {setWine,setSearch} from '../../redux/actions'
 import {connect} from 'react-redux'
 function mapStateToProps(state,props){
   let countries =  alasql('SELECT country,country as label FROM ? GROUP BY country ORDER BY country ASC ' ,[raw])
   countries.forEach((c,index) => c.key = index)
   return{
     countries : countries,
+    search : props.navigation.getParam('search') == true,
     selected : state.wine.country
   }
 }
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({setWine}, dispatch)
+  return bindActionCreators({setWine,setSearch}, dispatch)
 }
 class MyListItem extends React.PureComponent {
   _onPress = () => {
@@ -56,8 +57,8 @@ class Country extends React.PureComponent {
   _onPressItem = (id: string) => {
 
     Keyboard.dismiss()
-
-    this.props.setWine({country:(id == -1) ? null : this.props.countries[id].country})
+    let country = (id == -1) ? null : this.props.countries[id].country
+    this.props.search ? this.props.setSearch({country}) : this.props.setWine({country})
     this.props.navigation.goBack()
   };
 
@@ -104,6 +105,10 @@ class Country extends React.PureComponent {
               keyExtractor={this._keyExtractor}
               renderItem={this._renderItem}
             />
+            <Button
+            onPress={() => this.props.navigation.goBack()}
+            title="Fermer"
+          />
         </SafeAreaView>
     );
   }

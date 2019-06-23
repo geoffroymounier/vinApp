@@ -12,7 +12,7 @@ const store = createStore()
 export default class App extends React.Component {
   constructor(props) {
     super(props);
-
+    console.disableYellowBox = true;
     // Creating the socket-client instance will automatically connect to the server.
 
 

@@ -1,6 +1,8 @@
 import React from 'react'
-import {TouchableOpacity, Image,TextInput} from 'react-native'
+import {TouchableOpacity, Image,TextInput,View} from 'react-native'
+import {SafeAreaView} from 'react-navigation'
 const search = require('../../assets/search.png')
+const times = require('../../assets/times.png')
 export default class SearchBar extends React.Component {
   constructor(props){
     super(props)
@@ -8,6 +10,7 @@ export default class SearchBar extends React.Component {
   render(){
 
     return (
+      <SafeAreaView>
       <TouchableOpacity
         onPress={()=>{
           this.textinput.focus()
@@ -15,7 +18,8 @@ export default class SearchBar extends React.Component {
         style={{
           flexDirection : 'row',
           padding:10,
-          ...this.props.style}}
+
+        }}
       >
         <Image
         style={{
@@ -27,17 +31,38 @@ export default class SearchBar extends React.Component {
         />
         <TextInput
           ref={t => this.textinput = t}
-
+          onSubmitEditing = {() => this.props.onSubmitEditing ? this.props.onSubmitEditing() : void 0}
           onChangeText={(search)=>this.props.onChangeText(search)}
           placeholder='Rechercher'
           underlineColorAndroid='transparent'
           autoCorrect = {false}
-
-          value={this.props.search}
-
-          style={{paddingHorizontal:10,fontSize:18}}
+          value={this.props.value}
+          style={{paddingHorizontal:10,fontSize:18,flex:1}}
           />
+        {(this.props.value|| '').length > 0 ?
+          <TouchableOpacity
+            onPress={()=>{
+              this.props.onChangeText('')
+              this.props.onClear ? this.props.onClear() : void 0
+            }}
+            style={{
+              height:24,
+              justifyContent:'center'
+          }}>
+            <Image
+
+              style={{
+                resizeMode: 'contain',
+                height:16,
+              }}
+             source={times}
+            />
+          </TouchableOpacity>
+        : void 0}
+
+
       </TouchableOpacity>
+      </SafeAreaView>
     );
   }
 }
