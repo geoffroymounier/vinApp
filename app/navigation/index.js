@@ -19,13 +19,16 @@ import Cepage from '../components/options/cepage'
 import Annee from '../components/options/annee'
 import Accords from '../components/options/accords'
 import Aromes from '../components/options/aromes'
+import Pastilles from '../components/options/pastilles'
+import ChoseCellar from '../components/options/choseCellar'
 import Filter from '../views/filter'
 // import Profile from '../views/profile'
 
 const defaultNavigationOptions = ({ navigation  }) => {
+
   return {
   headerRight: (
-    <TouchableOpacity onPress={() => navigation.toggleDrawer()} >
+    <TouchableOpacity onPress={() => navigation.openDrawer()} >
       <Image style={{resizeMode: 'contain',height:20}} source={require('../assets/menu.png')} />
     </TouchableOpacity>
     )
@@ -41,7 +44,9 @@ const filterStack = createStackNavigator({
   cepage: Cepage,
   annee : Annee,
   accords : Accords,
-  aromes : Aromes
+  aromes : Aromes,
+  pastilles:Pastilles,
+  choseCellar:ChoseCellar
 },{
   defaultNavigationOptions,
 
@@ -69,7 +74,9 @@ const TabStackWine = createDrawerNavigator({
     cepage: Cepage,
     annee : Annee,
     accords : Accords,
-    aromes : Aromes
+    aromes : Aromes,
+    pastilles:Pastilles,
+    choseCellar:ChoseCellar
   },{
     mode : 'modal',
     headerMode:'none',

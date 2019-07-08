@@ -9,10 +9,15 @@ const initialState = {};
 export default function user(state = initialState, action) {
 switch (action.type) {
   case 'SET_SEARCH':
-    return {
-      ...state,
-      ...action.payload
+    let newState = {...state}
+    for (var i in action.payload){
+      if (action.payload[i] != null){
+        newState[i] = action.payload[i]
+      } else if (newState[i]) {
+        delete newState[i]
+      }
     }
+    return newState
     break;
   case 'RESET_SEARCH':
       return {}

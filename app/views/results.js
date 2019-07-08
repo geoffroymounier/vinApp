@@ -8,6 +8,7 @@ import {Animated,Dimensions,ActivityIndicator,InteractionManager,Easing,Platform
 // import firebase from 'react-native-firebase';
 import Button from '../components/markers/button'
 import messages from '../components/texts/'
+const heartFull = require('../assets/heart-full.png')
 // import { Searchbar } from 'react-native-paper';
 // import {carafageArray,makeRegionArray,makeStockArray,makeYearArray} from '../components/array/pickers'
 import {caracteristiques,colors,cepageValues,dialog,json,regions} from '../components/array/description'
@@ -121,23 +122,21 @@ class MyListItem extends React.Component {
           <View style={{paddingHorizontal:10,alignSelf:'baseline',flex:1,flexDirection:'column'}}>
             <View style={{flexDirection:'row'}}>
               <Text style={styles.title}>{this.props.appelation}</Text>
-              {favorite ?
-                  <View style={{marginLeft:10,alignSelf:'center'}}>
-                    <Icon name={'heart'}
-                    regular={favorite!=true}
-                    color={favorite ? 'pink' : 'darkgray'}
-                    solid={favorite==true}
-                    size={20}
-                  />
-                  </View>
-
-              : void 0}
+                {favorite ?
+                    <View>
+                      <Image style={{
+                        resizeMode: 'contain',
+                        height:20
+                      }} source={heartFull} />
+                    </View>
+                : void 0}
             </View>
 
 
 
 
-            <Text style={styles.domain}>{this.props.region || ''} {this.props.annee || ''}</Text>
+            <Text style={styles.domain}>{this.props.region || ''}</Text>
+            {this.props.annee ? <Text style={styles.domain}>{this.props.annee || ''}</Text> : void 0}
             {this.props.domain && this.props.domain != '' ? <Text style={styles.domain}>{this.props.domain} </Text> : void 0}
           </View>
 
@@ -156,6 +155,11 @@ class MyListItem extends React.Component {
 }
 
 class Wines extends React.Component {
+  static navigationOptions = ({ navigation  }) => {
+    return {
+    headerRight: null
+    }
+  }
   constructor(props){
     super(props)
     this.state = {firstQuery:'',refreshing:true}

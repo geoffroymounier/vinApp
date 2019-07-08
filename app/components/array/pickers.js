@@ -110,4 +110,19 @@ function carafageArray(){
   }
   return array
 }
-export {carafageArray,makeTypologieArray,makeRegionArray,makeStockArray,makePriceArray,makeYearArray,lastYearArray,terrainArray,apogeeArray}
+function temperatureArray(){
+  let array = []
+  let temperature = 8
+  let i = 0
+  while (temperature <= 18){
+    array.push({
+      label:(temperature.toString() + " °C").replace(/\./,','),
+      value:i.toString(),
+      key:i
+    })
+    temperature = temperature+0.5
+    i++
+  }
+  return array
+}
+export {temperatureArray,carafageArray,makeTypologieArray,makeRegionArray,makeStockArray,makePriceArray,makeYearArray,lastYearArray,terrainArray,apogeeArray}

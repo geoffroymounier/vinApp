@@ -35,6 +35,7 @@ class EditFile extends React.Component {
     const { params = {} } = navigation.state;
     return {
     headerTitle : 'Editer ce vin',
+    headerRight:null,
     headerLeft: (
       <Button
         onPress={() => params.checkLeave()}

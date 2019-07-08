@@ -3,6 +3,7 @@ import {TouchableOpacity, Image,TextInput,View} from 'react-native'
 import {SafeAreaView} from 'react-navigation'
 const search = require('../../assets/search.png')
 const times = require('../../assets/times.png')
+const filter = require('../../assets/filter.png')
 export default class SearchBar extends React.Component {
   constructor(props){
     super(props)
@@ -10,7 +11,7 @@ export default class SearchBar extends React.Component {
   render(){
 
     return (
-      <SafeAreaView>
+      <SafeAreaView style={{width:"100%"}}>
       <TouchableOpacity
         onPress={()=>{
           this.textinput.focus()
@@ -18,13 +19,15 @@ export default class SearchBar extends React.Component {
         style={{
           flexDirection : 'row',
           padding:10,
-
         }}
       >
         <Image
         style={{
           resizeMode: 'contain',
           height:24
+        }}
+        onPress={()=>{
+          if (this.props.searchClicked) this.props.searchClicked()
         }}
          source={search}
         // style={[styles.button, this.props.color && {backgroundColor:this.props.color}]}
@@ -56,6 +59,26 @@ export default class SearchBar extends React.Component {
                 height:16,
               }}
              source={times}
+            />
+          </TouchableOpacity>
+        : void 0}
+        {this.props.filterResults ?
+          <TouchableOpacity
+            onPress={()=>{
+              this.props.toggleSorting()
+            }}
+            style={{
+              height:24,
+              paddingRight:5,
+              justifyContent:'center'
+          }}>
+            <Image
+
+              style={{
+                resizeMode: 'contain',
+                height:20,
+              }}
+             source={filter}
             />
           </TouchableOpacity>
         : void 0}

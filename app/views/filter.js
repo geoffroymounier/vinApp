@@ -6,7 +6,7 @@ import {bindActionCreators} from 'redux';
 import {colors as _colors,cepageValues,accordsValues,json} from '../components/array/description'
 import MultiSlider from '@ptomasroos/react-native-multi-slider'
 import CustomMarker from '../components/markers/customMarker'
-import {setSearch,resetResults} from '../redux/actions'
+import {setSearch,resetResults,resetSearch} from '../redux/actions'
 import {fetchSearch} from '../functions/api'
 
 const { height, width } = Dimensions.get('window');
@@ -17,12 +17,17 @@ function mapStateToProps(state){
   }
 }
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({setSearch,resetResults,fetchSearch},dispatch)
+  return bindActionCreators({resetSearch,setSearch,resetResults,fetchSearch},dispatch)
 }
 
 const deleteIcon = <Image source={require('../assets/times.png')} color='#515151' style={{height:10,resizeMode:'contain'}}/>
 
 class Filter extends React.Component {
+  static navigationOptions = ({ navigation  }) => {
+    return {
+    headerRight: null
+    }
+  }
   constructor(props){
     super(props);
     this.state = {
@@ -36,7 +41,13 @@ class Filter extends React.Component {
     this.props.fetchSearch(this.props.wine)
     this.props.navigation.push('results')
   }
-
+  componentDidMount(){
+    this.props.navigation.addListener('willBlur',
+    payload => {
+      this.props.resetResults()
+      if (!payload.action.routeName)this.props.resetSearch() // only if we go back
+    })
+  }
   render() {
 
     let {minYear = 2010,minPrice=0,maxPrice=10, maxYear=2019,minApogee=2018,maxApogee=2020,cuisine_monde,price,favorite,stock,nez,legumes,viandes,poissons,desserts,aperitif,fromages,bouche,appelation,domain,annee,before,apogee,carafage,region,country,pastilles} = this.props.wine
@@ -299,19 +310,7 @@ class Filter extends React.Component {
       <View style={{position:'absolute',zIndex:3,bottom:0,left:0,alignItems:'center',width:'100%',height:55,flex:1,borderTopWidth:1,borderColor:'#bababa',backgroundColor:'#FEFDF8'}}>
         <TouchableOpacity onPress={() => this.triggerSearch()} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',height:55,marginBottom:5,width:1.1*width,backgroundColor:"#530000"}}>
 
-            {/* <Text style={{color:'#FEFDF8',fontWeight:'600',fontSize:16}}>CHERCHER</Text> */}
-              {/* <Icon
-                  style={{
-                    marginHorizontal:10,
-                    backgroundColor:'transparent'
-                  }}
-                  name="search"
-                  type="font-awesome"
-                  color={'#FEFDF8'}
-                  size = {18}
-
-              /> */}
-
+            <Text style={{color:'#FEFDF8',fontWeight:'600',fontSize:16}}>CHERCHER</Text>
 
         </TouchableOpacity>
       </View>

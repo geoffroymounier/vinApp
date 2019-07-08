@@ -55,7 +55,7 @@ class Region extends React.PureComponent {
   }
 
 
-  _keyExtractor = (item, index) => item.key;
+  _keyExtractor = (item, index) => item.key.toString();
 
   _onPressItem = (id: string) => {
 

@@ -1,35 +1,42 @@
 import React, {Component} from 'react';
 // import {Actions} from 'react-native-router-flux'
-import {Animated,Button,Dimensions,ActivityIndicator,InteractionManager,Easing,Platform,ActionSheetIOS,Alert,FlatList,TouchableHighlight,StyleSheet, Text, View,Image,ScrollView,KeyboardAvoidingView,TextInput,Picker,TouchableOpacity} from 'react-native';
+import {Animated,Button,Dimensions,ActivityIndicator,InteractionManager,Easing,Platform,ActionSheetIOS,Alert,FlatList,TouchableHighlight,StyleSheet, Text, View,Image,ScrollView,KeyboardAvoidingView,TextInput,PickerIOS,TouchableOpacity} from 'react-native';
 // import Icon from 'react-native-vector-icons/FontAwesome5';
 // import {Chip} from 'react-native-paper';
 // import RNPickerSelect from 'react-native-picker-select';
 // import ManagePhoto from '../components/modals/managePhoto'
 import SearchBar from '../components/markers/searchbar';
 import Checkbox from '../components/markers/checkbox';
-// import Button from '../components/markers/button'
+import ButtonCustom from '../components/markers/button'
 import messages from '../components/texts/'
-// import { Searchbar } from 'react-native-paper';
+const heartFull = require('../assets/heart-full.png')
 // import {carafageArray,makeRegionArray,makeStockArray,makeYearArray} from '../components/array/pickers'
 import {caracteristiques,colors,cepageValues,dialog,json,regions} from '../components/array/description'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {fetchWines,textSearch} from '../functions/api'
+import {fetchWines,textSearch,deleteWine,fetchSearch} from '../functions/api'
 import {setWine,resetWine,resetResults,setSearch,resetSearch} from '../redux/actions'
 
 const { height, width } = Dimensions.get('window');
 
 function mapStateToProps(state,props){
+  let wines = (Object.keys(state.search||{}).length) == 0 ? !state.wines ? null : (state.wines||[]).filter(w => w.cellarId == state.cellar._id)
+  : !state.results ? null : (state.results).filter(w => w.cellarId == state.cellar._id)
+  let keyOrder = ((state.search||{}).keyOrder) || 'region'
+  let order = ((state.search||{}).order) || 1
   return {
-    wines : (Object.keys(state.search||{}).length) == 0 ? !state.wines ? null : (state.wines||[]).filter(w => w.cellarId == state.cellar._id)
-    : !state.results ? null : (state.results).filter(w => w.cellarId == state.cellar._id),
+    search : state.search||{},
+    wines : wines == null ? null : (wines).sort((a,b) => {
+      return a[keyOrder] > b[keyOrder] ? order : -1*order
+    }),
+    cellarId : state.cellar._id,
     isSearching : Object.keys(state.search||{}).length > 0,
-    activeSelection : props.navigation.getParam('activeSelection') == true
-
+    activeSelection : props.navigation.getParam('activeSelection') == true,
+    showPicker : props.navigation.getParam('showPicker') == true
   }
 }
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({fetchWines,resetSearch,setWine,setSearch,resetWine,textSearch,resetResults},dispatch)
+  return bindActionCreators({fetchSearch,fetchWines,deleteWine,resetSearch,setWine,setSearch,resetWine,textSearch,resetResults},dispatch)
 }
 
 
@@ -120,25 +127,22 @@ class MyListItem extends React.Component {
         <View style={{width:'100%',backgroundColor:'white',flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderColor:"lightgray",borderBottomWidth:1,padding:10}}>
 
         <View style={{flexDirection:'row',alignItems:'center',flex:6}}>
-          <View style={{backgroundColor:(colors[this.props.color] ? colors[this.props.color].color : 'black' ),borderWidth:1,borderColor:'#bababa',borderRadius:15,width:30,height:30}}>
-          </View>
+          <View style={{backgroundColor:(colors[this.props.color] ? colors[this.props.color].color : 'black' ),borderWidth:1,borderColor:'#bababa',borderRadius:15,width:30,height:30}}></View>
 
           <View style={{paddingHorizontal:10,alignSelf:'baseline',flex:1,flexDirection:'column'}}>
             <View style={{flexDirection:'row'}}>
               <Text style={styles.title}>{this.props.appelation}</Text>
               {favorite ?
-                  <View style={{marginLeft:10,alignSelf:'center'}}>
-                    <Icon name={'heart'}
-                    regular={favorite!=true}
-                    color={favorite ? 'pink' : 'darkgray'}
-                    solid={favorite==true}
-                    size={20}
-                  />
+                  <View>
+                    <Image style={{
+                      resizeMode: 'contain',
+                      height:20
+                    }} source={heartFull} />
                   </View>
-
               : void 0}
             </View>
-            <Text style={styles.domain}>{this.props.region || ''} {this.props.annee || ''}</Text>
+            <Text style={styles.domain}>{this.props.region || ''}</Text>
+            {this.props.annee ? <Text style={styles.domain}>{this.props.annee || ''}</Text> : void 0}
             {this.props.domain && this.props.domain != '' ? <Text style={styles.domain}>{this.props.domain} </Text> : void 0}
           </View>
 
@@ -167,13 +171,19 @@ class MyListItem extends React.Component {
 class Wines extends React.Component {
   static navigationOptions = ({ navigation  }) => {
     const { params = {} } = navigation.state;
-    return {
-    headerLeft: params.activeSelection ?
+    if (params.activeSelection) return {
+    headerLeft:
     (<Button
-      onPress={() => void 0}
+      onPress={() => navigation.setParams({activeSelection:false})}
       title={"Annuler"}
+    />),
+    headerRight: params.selected > 0 ?
+    (<Button
+      onPress={() => navigation.setParams({showPicker:true})}
+      title={"Options"}
     />) : void 0
   }
+  return {headerTitle : navigation.getParam('cellarName')}
   }
   constructor(props){
     super(props)
@@ -186,11 +196,11 @@ class Wines extends React.Component {
   _onPressItem = (id: string) => {
     this.props.resetWine()
     this.props.setWine(this.props.wines[id])
-    this.props.navigation.push('ficheWine')
+    this.props.navigation.push('ficheWine',{color:this.props.wines[id].color})
   };
 
   componentDidMount(){
-    this.props.fetchWines('',{limit:this.state.limit}).then(()=>this.setState({refreshing:false}))
+    this.props.fetchWines('',{keyOrder:this.props.search.keyOrder || 'region',order:(this.props.search.order || 1),cellarId :this.props.cellarId,limit:this.state.limit}).then(()=>this.setState({refreshing:false}))
   }
   _renderItem = ({item}) => (
     <MyListItem
@@ -198,6 +208,7 @@ class Wines extends React.Component {
         let selected = [...this.state.selected]
         let index = selected.findIndex(array => array == id)
         index == -1  ? selected.splice(selected.length, 0,id ) : selected.splice(index, 1 )
+        this.props.navigation.setParams({selected:selected.length})
         this.setState({selected})
       }}
       activeSelection = {this.props.activeSelection}
@@ -213,12 +224,14 @@ class Wines extends React.Component {
 
   }
   render(){
-    const { firstQuery } = this.state;
+
+    let keyOrder = this.props.search.keyOrder || 'region'
+    let orderString = (this.props.search.order || 1) == 1 ? ' (décroissant)' : ' (croissant)'
+    let order = this.props.search.order || 1
+
     if (!this.props.wines) return (
       <View style={{justifyContent:'center',flex:1}}>
-
         <ActivityIndicator />
-
       </View>)
     let wines = []
 
@@ -252,6 +265,7 @@ class Wines extends React.Component {
         {this.props.activeSelection ?
           <TouchableOpacity onPress={()=>{
             let selected = this.state.allSelect ? [] : this.props.wines.map(w => w._id);
+            this.props.navigation.setParams({selected:selected.length})
             this.setState({selected,allSelect:!this.state.allSelect})
           }} >
             <View style={{flexDirection:'row',alignItems:'space-between',borderColor:"lightgray",borderBottomWidth:1,padding:10}}>
@@ -260,7 +274,7 @@ class Wines extends React.Component {
               <Checkbox
                 onPress={()=>{
                   let selected = this.state.allSelect ? [] : this.props.wines.map(w => w._id);
-                  console.log(selected)
+                  this.props.navigation.setParams({selected:selected.length})
                   this.setState({selected,allSelect:!this.state.allSelect})
                 }}
                checked={this.state.allSelect}
@@ -274,6 +288,7 @@ class Wines extends React.Component {
             placeholder='Rechercher'
             underlineColorAndroid='transparent'
             autoCorrect = {false}
+            filterResults
             onSubmitEditing = {()=> {
               if ((this.state.search || '').length  == 0 ) return
               this.props.resetResults()
@@ -284,6 +299,7 @@ class Wines extends React.Component {
               this.props.resetSearch()
               this.props.resetResults()
             }}
+            toggleSorting={()=>this.setState({showSorting:true})}
             lightTheme
             autoFocus
             value={this.state.search}
@@ -291,12 +307,68 @@ class Wines extends React.Component {
             containerStyle={{flex:1,backgroundColor:'transparent',borderBottomWidth:0,borderTopWidth:0}}
            />
         }
+        {this.props.showPicker == true ?
+          ActionSheetIOS.showActionSheetWithOptions(
+          {
+            options: ['Annuler', 'Supprimer' , 'Déplacer de Cave'],
+            destructiveButtonIndex: 1,
+            cancelButtonIndex: 0,
+          },
+          (buttonIndex) => {
+            this.props.navigation.setParams({showPicker:false})
+            if (buttonIndex === 1) {
 
+              this.state.allSelect ? this.props.deleteWine(true,[],this.props.wines[0].cellarId) : this.props.deleteWine(false,this.state.selected,this.props.wines[0].cellarId)
+              this.setState({selected:[]})
+              this.props.navigation.setParams({showPicker:false,activeSelection:false,selected:0})
 
+            } else if (buttonIndex === 2) {
+              this.props.navigation.push('choseCellar',{all:this.state.allSelect,selected:this.state.selected,cellarId:this.props.wines[0].cellarId})
+              this.props.navigation.setParams({showPicker:false,activeSelection:false,selected:0})
+            }
+          },
+        )
+        : void 0}
+        {this.state.showSorting == true ?
+          ActionSheetIOS.showActionSheetWithOptions(
+          {
+            title:'Tri :',
+            options: [
+             'Annuler',
+             'Millesime' + ((keyOrder == 'year') ?  orderString : ''),
+             'Region' + ((keyOrder == 'region') ? orderString : ''),
+             'Couleur' + ((keyOrder == 'color') ? orderString  : ''),
+             'Prix' + ((keyOrder == 'price') ? orderString  : '')
+           ],
+            cancelButtonIndex: 0,
+          },
+          (buttonIndex) => {
+            this.setState({showSorting:false})
+            let newOrder;
+            let newKeyOrder;
+            if (buttonIndex === 1) {
+              newKeyOrder = 'year'
+              newOrder = (keyOrder == 'year' && order == 1) ? -1 : 1
+            } else if (buttonIndex === 2) {
+              newKeyOrder = 'region'
+              newOrder = (keyOrder == 'region' && order == 1) ? -1 : 1
+            } else if (buttonIndex === 3){
+              newKeyOrder = 'color'
+              newOrder = (keyOrder == 'color' && order == 1) ? -1 : 1
+            } else if (buttonIndex === 4){
+              newKeyOrder = 'price'
+              newOrder = (keyOrder == 'price' && order == 1) ? -1 : 1
+            }
+            this.props.resetResults()
+            this.props.setSearch({order:newOrder,keyOrder:newKeyOrder})
+            setTimeout(()=>this.props.fetchSearch(this.props.search),500)
+          },
+        )
+        : void 0}
         <FlatList
           refreshing={this.state.refreshing}
           onEndReached = {()=>{
-            this.props.fetchWines('',{limit:this.state.limit+10}).then(()=>this.setState({limit:this.state.limit+10}))
+            this.props.fetchWines('',{cellarId:this.props.cellarId,keyOrder:this.props.search.keyOrder || 'region',order:(this.props.search.order || 1), limit:this.state.limit+10}).then(()=>this.setState({limit:this.state.limit+10}))
           }}
           data={wines}
           keyExtractor={this._keyExtractor}
@@ -333,10 +405,10 @@ class Wines extends React.Component {
         />
 
         </View>
-        {/* <Button content='Ajouter un Vin' onPress={()=>{
+        <ButtonCustom content='Ajouter un Vin' onPress={()=>{
             this.props.resetWine()
             this.props.navigation.push('ficheWine')
-          }} /> */}
+          }} />
   </View>
     )
   }

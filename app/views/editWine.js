@@ -8,11 +8,20 @@ import ModalPhotoChoice from '../components/modals/modalPhotoChoice.js'
 import RNPickerSelect from 'react-native-picker-select';
 import ManagePhoto from '../components/modals/managePhoto'
 import regionArray from '../components/array/area'
+const heartEmpty = require('../assets/heart-empty.png')
+const heartFull = require('../assets/heart-full.png')
+const decanter = require('../assets/decanter.png')
+const grapes = require('../assets/grapes.png')
+const thermometer = require('../assets/thermometer.png')
+const star = require('../assets/star.png')
+const history = require('../assets/history.png')
+const bubbles = require('../assets/bubbles.png')
+import countries from '../assets/countries/index.js'
 import raw from '../components/array/raw'
 import {images,editFile} from 'styles'
 import {country_code,getCountryCode} from '../components/array/country_code'
 import alasql from 'alasql'
-import {carafageArray,makeTypologieArray,makePriceArray,makeRegionArray,makeStockArray,terrainArray,makeYearArray,lastYearArray,apogeeArray} from '../components/array/pickers'
+import {carafageArray,temperatureArray,makeTypologieArray,makePriceArray,makeRegionArray,makeStockArray,terrainArray,makeYearArray,lastYearArray,apogeeArray} from '../components/array/pickers'
 import {caracteristiques,colors,cepageValues,accordsValues,dialog,json,pastillesValues} from '../components/array/description'
 import {connect} from 'react-redux'
 import MultiSlider from '@ptomasroos/react-native-multi-slider'
@@ -36,26 +45,31 @@ class EditFile extends React.Component {
   static navigationOptions = ({ navigation  }) => {
     const { params = {} } = navigation.state;
     return {
-    headerTitle : 'Editer ce vin',
-    headerLeft: (
+    headerStyle: {
+      backgroundColor: (colors[params.color] || {}).color || 'white',
+    },
+    headerTintColor: params.color == 'red' ? 'white' : void 0,
+    headerRight: params.isDifferent ? ( // display checkLeave only if different
       <Button
+        color={params.color == 'red' ? 'white' : 'black'}
         onPress={() => params.checkLeave()}
-        title={"Retour"}
+        title={"Enregistrer"}
       />
-    )
+    ) : void 0,
+    // headerLeft: (
+    //   <Button
+    //     color={params.color == 'red' ? 'white' : 'black'}
+    //     onPress={() => navigation.goBack()}
+    //     title={"Annuler"}
+    //   />
+    // )
   }
   }
   constructor(props){
     super(props);
     this.state = {
-      modal:'',
       modalColor:'',
-      modalRegion:'',
-      activeSections: [],
       choices : [],
-      cepageModal:'',
-      modalAccords:'',
-      modalAppelation : '',
       modalPastille:'',
       wine : {}
     }
@@ -64,22 +78,32 @@ class EditFile extends React.Component {
 
   checkLeave = () => {
 
-    if (!checkData(this.props.wine,this.initialProps) == true) return this.props.navigation.goBack()
-    else {
-      this.props.saveWine({...this.props.wine,cellarId:this.props.cellarId},this.props.wine._id)
-      this.props.navigation.goBack()
-      // Alert.alert('Save Data ? ')
+
+    this.props.saveWine({...this.props.wine,cellarId:this.props.cellarId},this.props.wine._id)
+    this.props.navigation.goBack()
+
+  }
+  componentDidUpdate(props,state){
+
+    let newDifferent = checkData(this.props.wine,this.initialProps)
+    let oldDifferent = checkData(props.wine,this.initialProps)
+    if (newDifferent != oldDifferent) {
+      props.navigation.setParams({isDifferent:newDifferent})
     }
   }
   componentDidMount(){
-    this.initialProps = Object.assign({},this.props.wine)
-    this.props.navigation.setParams({checkLeave: this.checkLeave})
+    this.initialProps = Object.assign({favorite:false},this.props.wine)
+    this.props.navigation.setParams({isDifferent: false,checkLeave:this.checkLeave})
+
   }
 
   render() {
+    let backgroundTextColor = this.props.wine.color == 'red' ? 'white' : 'black'
 
-    let {country,region,appelation,annee,before,apogee,pastilles,typologie,cuisine_monde,price,vendor,terrain,favorite,stock,nez,legumes,viandes,poissons,desserts,aperitif,fromages,bouche,color,domain,carafage,commentaire,photo} = this.props.wine
+    let {country,region,appelation,annee,before,apogee,typologie,temperature,cuisine_monde,price,vendor,terrain,stock,nez,legumes,viandes,poissons,desserts,aperitif,fromages,bouche,color,domain,carafage,commentaire,photo} = this.props.wine
+    let favorite = this.props.wine.favorite || false
     let cepage = this.props.wine.cepage || []
+    let pastilles = this.props.wine.pastilles || []
 
 
 
@@ -96,6 +120,7 @@ class EditFile extends React.Component {
           close={(object)=> {
             this.setState({modalColor:''})
             this.props.setWine({color:object})
+            this.props.navigation.setParams({color: object})
           }}
           />
       : void 0}
@@ -128,6 +153,12 @@ class EditFile extends React.Component {
 
       <View style={{...styles.container,justifyContent:'flex-start',backgroundColor:"white",marginBottom:50}}>
         <View style={{...styles.container,alignItems:'flex-start'}}>
+          <TouchableOpacity onPress={()=>this.props.setWine({favorite:!favorite})} style={{top:10,right:10,alignSelf:'center',position:'absolute',zIndex:10}}>
+            <Image style={{
+              resizeMode: 'contain',
+              height:32
+            }} source={favorite ? heartFull : heartEmpty} />
+          </TouchableOpacity>
           <ManagePhoto
             foundWine={(json)=> {
               if (json.proposition.length == 1){
@@ -153,14 +184,25 @@ class EditFile extends React.Component {
         <View style={{...styles.container,paddingVertical:10}}>
           <View style={styles.container}>
             <View style={editFile.cartoucheRow}>
+              <TouchableOpacity onPress={() => this.props.navigation.push('pastilles')} style={{...editFile.cartoucheLeft,flexWrap:'wrap'}}>
+                  {pastilles.length > 0 ?
+                    pastilles.map((e,i) => (
+                    <View key={i} style={{flexDirection:'row',alignItems:'center',borderWidth:1,borderColor:'gray',borderRadius:15,padding:5,margin:3}} >
+                        <Text style={{color:'#515151',fontSize:15,fontWeight:'600'}}>{e}</Text>
+                    </View>
+                  )
+                ) : <Text style={{...styles.undertitle,borderWidth:1,borderColor:'gray',borderRadius:15,padding:5,margin:3}}>Moments parfaits</Text>}
+              </TouchableOpacity>
+            </View>
+            <View style={editFile.cartoucheRow}>
               <TouchableOpacity onPress={()=>this.setState({modalColor:'modalColor'})}  style={editFile.cartoucheLeft}>
-                <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
+                <View style={{backgroundColor:(colors[color] || {}).color || 'black',borderWidth:1,borderColor:'#bababa',borderRadius:10,width:20,height:20,marginHorizontal:5}}></View>
                 <Text style={{...styles.textInputPicker,flexWrap:'wrap',paddingRight:30}}>{(colors[color] || {}).label || 'Couleur'}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={editFile.cartoucheRight}
                 onPress={()=>this.refs.typologie.setState({showPicker:true})} >
-                <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
+                <View style={{width:30,height:20}}><Image source={bubbles} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
                 <View style={{flex:1,flexDirection:'row'}}>
                   <RNPickerSelect
                      placeholder={{label: 'Typologie',value: ''}}
@@ -177,7 +219,7 @@ class EditFile extends React.Component {
             </View>
             <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center',alignSelf:'center',padding:5}}>
               <TouchableOpacity onPress={() => this.props.navigation.push('country')}  style={editFile.cartoucheLeft}>
-                <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
+                <View style={{width:30,height:18}}><Image source={countries['france']} style={{height:20,alignSelf:'center',...images.icon}}/></View>
                 <Text style={{...styles.textInputPicker,flexWrap:'wrap',paddingRight:30}}>{country || 'Pays'}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => this.props.navigation.push('region',{country})}  style={editFile.cartoucheRight}>
@@ -187,17 +229,17 @@ class EditFile extends React.Component {
             </View>
             <View style={editFile.cartoucheRow}>
               <TouchableOpacity onPress={() => this.props.navigation.push('annee',{keyValue:'apogee'})}  style={editFile.cartoucheLeft}>
-                <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
+                <View style={{width:30,height:20}}><Image source={star} style={{height:20,alignSelf:'center',...images.icon}}/></View>
                 <Text style={{...styles.textInputPicker,flexWrap:'wrap',paddingRight:30}}>{apogee || "Apogée"}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => this.props.navigation.push('annee',{keyValue:'before'})}  style={editFile.cartoucheRight}>
-                <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
+                <View style={{width:30,height:20}}><Image source={history} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
                 <Text style={{...styles.textInputPicker,flexWrap:'wrap',paddingRight:30}}>{before || "Jusqu'à"}</Text>
               </TouchableOpacity>
             </View>
             <View style={editFile.cartoucheRow}>
             <TouchableOpacity onPress={() => this.refs.carafage.setState({showPicker:true})}  style={editFile.cartoucheLeft}>
-              <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
+              <View style={{width:30,height:20}}><Image source={decanter} style={{height:20,alignSelf:'center',...images.icon}}/></View>
               <RNPickerSelect
                  placeholder={{label: 'Carafage',value: ''}}
                  textInputProps={styles.textInputPicker}
@@ -210,25 +252,27 @@ class EditFile extends React.Component {
                />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => this.refs.temperature.setState({showPicker:true})}  style={editFile.cartoucheRight}>
-              <View style={{width:30,height:20}}><Image source={require('../assets/map-marker-alt.png')} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
+              <View style={{width:30,height:22}}><Image source={thermometer} light size={20} color='#515151' style={{height:20,alignSelf:'center',...images.icon}}/></View>
               <RNPickerSelect
-                 placeholder={{label: 'Température',value: ''}}
+                 placeholder={{label: 'Température de service',value: ''}}
                  textInputProps={styles.textInputPicker}
                  style={pickerStyle}
                  ref={'temperature'}
                  doneText={'OK'}
-                 items={carafageArray()}
-                 onValueChange={(carafage) => this.props.setWine({temperature})}
-                 value={carafage}
+                 items={temperatureArray()}
+                 onValueChange={(temperature) => this.props.setWine({temperature})}
+                 value={temperature}
                />
             </TouchableOpacity>
+            </View>
+
           </View>
-          </View>
+
         </View>
 
         <View style={{...styles.container,flexDirection:'row',alignItems:'flex-start'}}>
           <View style={{...styles.container}}>
-          <View style={{borderTopWidth:5,borderBottomWidth:5,paddingVertical:5,borderRadius:0,borderColor:(colors[color] || {}).color || '#515151' ,width:"100%"}}>
+          <View style={{borderTopWidth:4,borderBottomWidth:4,paddingVertical:5,borderRadius:0,borderColor:(colors[color] || {}).color || '#cccccc' ,width:"100%"}}>
               <TouchableOpacity onPress={()=>this.props.navigation.push('appelation')} style={{...styles.TouchableOpacity,borderBottomWidth:0}}>
                 <Text
                   style={styles.appelation} value={domain}
@@ -245,21 +289,20 @@ class EditFile extends React.Component {
             <TouchableOpacity onPress={() => this.props.navigation.push('annee',{keyValue:'annee'})} style={{...styles.TouchableOpacity,borderBottomWidth:0}}>
               <Text style={styles.appelation}>{annee || "Annee"}</Text>
           </TouchableOpacity>
-            <TouchableOpacity onPress={() => this.props.navigation.push('cepage')} style={{...styles.TouchableOpacity,borderBottomWidth:0}}>
-              <View  style={{flexDirection:'row',alignSelf:'baseline',flexWrap: "wrap",alignItems:'center'}}>
-              <Text style={styles.undertitle}>{cepageValues.placeholder}</Text>
-              {cepage.map((e,i) => (
-                <View key={i} style={{flexDirection:'row',alignItems:'center',borderWidth:1,borderColor:'gray',borderRadius:15,padding:5,margin:3}} >
-                    <Text style={{color:'#515151',fontSize:15,fontWeight:'600'}}>{e}</Text>
-                </View>
-              )
-              )}
-            </View>
+          <TouchableOpacity onPress={() => this.props.navigation.push('cepage')} style={{...styles.TouchableOpacity,flexWrap:'wrap',justifyContent:'flex-start',alignItems:'center'}}>
+            <View style={{marginLeft:5,width:30,height:30}}><Image source={grapes} style={{alignSelf:'center',...images.icon}}/></View>
+              {cepage.length > 0 ?
+                cepage.map((e,i) => (
+                  <View key={i} style={{flexDirection:'row',alignItems:'center',borderWidth:1,borderColor:'gray',borderRadius:15,padding:5,margin:3}} >
+                      <Text style={{color:'#515151',fontSize:15,fontWeight:'600'}}>{e}</Text>
+                  </View>
+                ))
+                : <Text style={{...styles.undertitle,borderWidth:1,borderColor:'gray',borderRadius:15,padding:5,margin:3}}>Cépages</Text>}
           </TouchableOpacity>
 
           </View>
           <TouchableOpacity onPress={()=>this.refs.price.setState({showPicker:true})} style={{...styles.TouchableOpacity}}>
-              <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+              <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingTop:10}}>
               <Text style={{...styles.title}}>Prix : </Text>
                 <RNPickerSelect
                    placeholder={{label: 'Prix',value: ''}}
@@ -276,6 +319,8 @@ class EditFile extends React.Component {
                  />
               <MultiSlider
                   min={0}
+                  selectedStyle={{backgroundColor:(colors[color]||{}).color || '#e6e6e6'}}
+                  trackStyle={{backgroundColor:'#e6e6e6'}}
                   values={[price||0]}
                   onDownArrow = {()=>this.refs.stocks.setState({showPicker:true})}
                   onUpArrow = {()=>this.refs.terrain.setState({showPicker:true})}
@@ -294,7 +339,7 @@ class EditFile extends React.Component {
 
             </TouchableOpacity>
             <TouchableOpacity onPress={()=>this.refs.stocks.setState({showPicker:true})} style={{...styles.TouchableOpacity}}>
-                <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingBottom:10}}>
                   <Text style={{...styles.title}}>Stock : </Text>
                   <RNPickerSelect
                      placeholder={{label: 'En Stock',value: ''}}
@@ -310,6 +355,8 @@ class EditFile extends React.Component {
                    />
                   <MultiSlider
                     min={0}
+                    selectedStyle={{backgroundColor:(colors[color]||{}).color || '#e6e6e6'}}
+                    trackStyle={{backgroundColor:'#e6e6e6'}}
                     onUpArrow = {()=>this.refs.price.setState({showPicker:true})}
                     values={[stock||0]}
                     sliderLength={250}
@@ -330,10 +377,10 @@ class EditFile extends React.Component {
           </View> */}
 
 
-          <View style={{...styles.container,flexDirection:'row',width:'100%',alignItems:'flex-start',backgroundColor:"#eee5da",
+          <View style={{...styles.container,borderWidth:1,borderColor:'#bababa',flexDirection:'row',width:'100%',alignItems:'flex-start',backgroundColor:"#eee5da",backgroundColor:(colors[color]||{}).color || '#e6e6e6'
 
             }}>
-            <Text style={{...styles.title,fontWeight:'800'}}>{'ACCORDS'}</Text>
+            <Text style={{...styles.title,fontWeight:'700',color:backgroundTextColor,}}>{'ACCORDS'}</Text>
           </View>
           {Object.keys(accordsValues).map((accords,index) => {
             let accord = accordsValues[accords]
@@ -359,9 +406,10 @@ class EditFile extends React.Component {
             )
 
           })}
-          <View style={{...styles.container,flexDirection:'row',width:'100%',alignItems:'flex-start',backgroundColor:"#eee5da",
+          <View style={{...styles.container,borderWidth:1,borderColor:'#bababa',flexDirection:'row',width:'100%',alignItems:'flex-start',backgroundColor:"#eee5da",backgroundColor:(colors[color]||{}).color || '#e6e6e6'
+
             }}>
-            <Text style={{...styles.title,fontWeight:'800'}}>{'DÉGUSTATION'}</Text>
+            <Text style={{...styles.title,fontWeight:'700',color:backgroundTextColor,}}>{'DEGUSTATION'}</Text>
           </View>
           {Object.keys(json).map((caracts,index) => {
             let caract = json[caracts]

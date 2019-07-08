@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     flexDirection:'row',flex:2,justifyContent:'flex-start'
   },
   cartoucheRight: {
-    flexDirection:'row',flex:4,justifyContent:'flex-start'
+    flexDirection:'row',flex:3,justifyContent:'flex-start'
   }
 })
 export default styles

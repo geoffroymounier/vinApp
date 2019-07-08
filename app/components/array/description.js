@@ -30,8 +30,7 @@ const regions = [
   "Nouvelle-Zélande"
 ]
 
-const pastillesValues = {
-  values :["Apéro",
+const pastillesValues = ["Apéro",
   "Barbecue",
   "Occasion",
   "En Amoureux",
@@ -41,7 +40,7 @@ const pastillesValues = {
   "Soirée",
   "Dessert"
 ]
-}
+
 
 // const pastillesValues = [
 //   {label:"Apéro",color:"#530000"},
@@ -56,8 +55,8 @@ const terrains = ["Marnes","Argiles"]
 const typologie = ["Vin Tranquille","Effervescent","Vin Moelleux/Liquoreux","Vin Doux Naturel"]
 const colors = {
   red : {label:"Rouge",color:"#530000"},
-  white : {label:"Blanc",color:"#f9fad1"},
-  rose : {label:"Rosé",color:"#F2011F"},
+  white : {label:"Blanc",color:"#ffffb3"},
+  rose : {label:"Rosé",color:"#f5dde2"},
 }
 
 const cepageValues = {

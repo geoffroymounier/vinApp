@@ -1,33 +1,37 @@
 import React, {Component} from 'react';
 // import {Actions} from 'react-native-router-flux'
-import {Animated,Dimensions,ActivityIndicator,InteractionManager,Easing,Platform,ActionSheetIOS,Alert,FlatList,TouchableHighlight,StyleSheet, Text, View,Image,ScrollView,KeyboardAvoidingView,TextInput,Picker,TouchableOpacity} from 'react-native';
+import {Animated,Button,Dimensions,ActivityIndicator,InteractionManager,Easing,Platform,ActionSheetIOS,Alert,FlatList,TouchableHighlight,StyleSheet, Text, View,Image,ScrollView,KeyboardAvoidingView,TextInput,Picker,TouchableOpacity} from 'react-native';
 // import Icon from 'react-native-vector-icons/FontAwesome5';
 // import {Chip} from 'react-native-paper';
 // import RNPickerSelect from 'react-native-picker-select';
 // import ManagePhoto from '../components/modals/managePhoto'
 // import firebase from 'react-native-firebase';
 import messages from '../components/texts/'
-import Button from '../components/markers/button'
+import ButtonCustom  from '../components/markers/button'
+import Checkbox from '../components/markers/checkbox';
 // import { Searchbar } from 'react-native-paper';
 // import {carafageArray,makeRegionArray,makeStockArray,makeYearArray} from '../components/array/pickers'
 // import {caracteristiques,colors,cepageValues,dialog,json,regions} from '../components/array/description'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {fetchCellars} from '../functions/api'
+import {fetchCellars,deleteCellar} from '../functions/api'
 import {setCellar,resetCellar} from '../redux/actions'
 
 const { height, width } = Dimensions.get('window');
 
-function mapStateToProps(state){
+function mapStateToProps(state,props){
   return {
     cellars : state.cellars,
+    activeSelection : props.navigation.getParam('activeSelection') == true,
+    showPicker : props.navigation.getParam('showPicker') == true
+
     // user : state.profile.user,
     // message : state.profile.message,
     // isSearching:state.profile.isSearching || Object.keys(state.profile.querycelar || {}).length > 0
   }
 }
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({fetchCellars,setCellar,resetCellar},dispatch)
+  return bindActionCreators({deleteCellar,fetchCellars,setCellar,resetCellar},dispatch)
 }
 
 
@@ -48,7 +52,8 @@ class MyListItem extends React.Component {
 
     this.selectIt(1,()=>{
       this.selectIt(0,()=> void 0)
-      this.props.onPressItem(this.props.id)
+      // this.props.onPressItem(this.props.id)
+      this.props.activeSelection ? this.props.toggleSelect(this.props._id) : this.props.onPressItem(this.props.id)
       this.selectIt(0,()=> void 0)
     })
   };
@@ -114,8 +119,7 @@ class MyListItem extends React.Component {
         <View style={{width:'100%',backgroundColor:'white',flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderColor:"lightgray",borderBottomWidth:1,padding:10}}>
 
         <View style={{flexDirection:'row',alignItems:'center',flex:6}}>
-          <View style={{borderWidth:1,borderColor:'#bababa',borderRadius:15,width:30,height:30}}>
-          </View>
+
 
           <View style={{paddingHorizontal:10,alignSelf:'baseline',flex:1,flexDirection:'column'}}>
             <View style={{flexDirection:'row'}}>
@@ -136,10 +140,16 @@ class MyListItem extends React.Component {
           </View>
 
         </View>
+        {this.props.activeSelection ?
+          <Checkbox
+           onPress={this._onPress}
+           checked={this.props.selected}
+         />
+        :
         <View style={{flex:1,alignItems:'flex-start'}}>
-          <Text style={{alignSelf:'baseline',flexWrap: "wrap",width:50,textAlign:'center'}}>{this.props.price ? this.props.price + '€':''}</Text>
           <Text style={{alignSelf:'baseline',flexWrap: "wrap",width:50,textAlign:'center'}}>{this.props.stock +' bts'}</Text>
         </View>
+        }
 
         </View>
 
@@ -150,17 +160,32 @@ class MyListItem extends React.Component {
 }
 
 class Cellars extends React.Component {
+  static navigationOptions = ({ navigation  }) => {
+    const { params = {} } = navigation.state;
+    if (params.activeSelection) return {
+    headerLeft:
+    (<Button
+      onPress={() => navigation.setParams({activeSelection:false})}
+      title={"Annuler"}
+    />),
+    headerRight: params.selected > 0 ?
+    (<Button
+      onPress={() => navigation.setParams({showPicker:true})}
+      title={"Options"}
+    />) : void 0
+    }
+  }
   constructor(props){
     super(props)
-    this.state = {firstQuery:'',refreshing:true}
+    this.state = {firstQuery:'',refreshing:true,selected:[]}
     this._onPressItem = this._onPressItem.bind(this)
     this.manageItem = this.manageItem.bind(this)
   }
-  _keyExtractor = (item, index) => item.id;
+  _keyExtractor = (item, index) => item.key;
 
   _onPressItem = (id: string) => {
     this.props.setCellar(this.props.cellars[id])
-    this.props.navigation.push('wines')
+    this.props.navigation.push('wines',{cellarName:this.props.cellars[id].name})
     // Actions.fiche({
     //       id:id,
     //       celar:this.props.[id],
@@ -177,6 +202,15 @@ class Cellars extends React.Component {
       onPressItem={this._onPressItem}
       manageItem={this.manageItem}
       {...item}
+      toggleSelect = {(id)=>{
+        let selected = [...this.state.selected]
+        let index = selected.findIndex(array => array == id)
+        index == -1  ? selected.splice(selected.length, 0,id ) : selected.splice(index, 1 )
+        this.props.navigation.setParams({selected:selected.length})
+        this.setState({selected})
+      }}
+      activeSelection = {this.props.activeSelection}
+      selected = {this.state.selected.findIndex(array => array == item._id) > -1}
     />
   );
 
@@ -196,7 +230,6 @@ class Cellars extends React.Component {
   }
   render(){
     const { firstQuery } = this.state;
-    console.log(this.props.cellars)
     if (!this.props.cellars) return (
       <View style={{justifyContent:'center',flex:1}}>
 
@@ -209,7 +242,9 @@ class Cellars extends React.Component {
       if (!celar) return null
       cellars.push({
         id:i.toString(),
+        _id: celar._id,
         key: celar.id,
+        stock:celar.stock,
         name:celar.name,
         description:celar.description
       })
@@ -224,7 +259,28 @@ class Cellars extends React.Component {
           justifyContent: "center",
           justifyContent:"flex-start",
         }}>
+        {this.props.showPicker == true ?
+          ActionSheetIOS.showActionSheetWithOptions(
+          {
+            options: this.state.selected.length > 1 ? ['Annuler', 'Supprimer' , 'Fusionner les caves'] : ['Annuler','Supprimer'],
+            destructiveButtonIndex: 1,
+            cancelButtonIndex: 0,
+          },
+          (buttonIndex) => {
+            this.props.navigation.setParams({showPicker:false})
+            if (buttonIndex === 1) {
+              this.props.deleteCellar(this.state.selected)
+              this.setState({selected:[]})
+              this.props.navigation.setParams({showPicker:false,activeSelection:false,selected:0})
 
+              /* destructive action */
+            } else if (buttonIndex === 2) {
+
+            }
+          },
+        )
+
+        : void 0}
         <FlatList
           refreshing={this.state.refreshing}
 
@@ -253,7 +309,7 @@ class Cellars extends React.Component {
         />
 
         </View>
-        <Button content='Ajouter une Cave' onPress={()=>{
+        <ButtonCustom content='Ajouter une Cave' onPress={()=>{
             this.props.resetCellar()
             this.props.navigation.push('editCellar')
           }} />

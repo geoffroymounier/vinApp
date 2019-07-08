@@ -1,7 +1,7 @@
-import {setUser,setWines,setCellars,setResults} from '../redux/actions'
+import {setUser,removeCellars,removeWines,setWines,setCellars,setResults} from '../redux/actions'
 import {getCredentials,rememberEmailPassword} from './keychainFunctions'
 
-// import io from 'socket.io-client';
+import io from 'socket.io-client';
 const URL = "http://localhost:3001"
 let token="";
 let accessToken = "";
@@ -62,6 +62,66 @@ function fetchWines(wineId = '',query = {}){
     })
   }
 }
+function deleteCellar(cellarArray){
+  return function(dispatch) {
+    return new Promise(async function(resolve,reject){
+      let body = {cellars:cellarArray}
+      fetchData("DELETE","/cellars/",{},body)
+      .then(array=>{
+        dispatch(removeCellars(cellarArray))
+        resolve();
+      })
+      .catch(e=>reject(e))
+    })
+  }
+}
+function moveWines(all = false,wineArray,cellarId,newCellarId){
+  return function(dispatch) {
+    return new Promise(async function(resolve,reject){
+      let params = {}
+      let body = {}
+      if (all){
+        params = {
+          allSelect : true,
+          cellarId,
+          newCellarId
+        }
+      } else {
+        body = {wines:wineArray}
+        params = {newCellarId}
+      }
+      fetchData("PUT","/wines/",params,body)
+      .then(array=>{
+        dispatch(setWines([array]))
+        resolve();
+      })
+      .catch(e=>reject(e))
+    })
+  }
+}
+function deleteWine(all = false,wineArray,cellarId){
+  return function(dispatch) {
+    return new Promise(async function(resolve,reject){
+      let params = {}
+      let body = {}
+      if (all){
+        params = {
+          allSelect : true,
+          cellarId : cellarId
+        }
+      } else {
+        body = {wines:wineArray}
+      }
+      fetchData("DELETE","/wines/",params,body)
+      .then(array=>{
+        if (all) dispatch(removeWines(cellarId))
+        else dispatch(removeWines(wineArray))
+        resolve();
+      })
+      .catch(e=>reject(e))
+    })
+  }
+}
 function saveWine(wine,wineId=''){
   return function(dispatch) {
     return new Promise(async function(resolve,reject){
@@ -86,10 +146,10 @@ function saveCellar(cellar,cellarId=''){
     })
   }
 }
-function fetchCellars(){
+function fetchCellars(cellarId=''){
   return function(dispatch) {
     return new Promise(async function(resolve,reject){
-      fetchData("GET","/cellars")
+      fetchData("GET","/cellars/"+cellarId)
       .then(array=>{
         console.log(array)
         dispatch(setCellars(array))
@@ -171,13 +231,19 @@ function login(data){
     .then(async function(res){
       if (data) await rememberEmailPassword(res.userId,res.accessToken)
       token = res.token;
+      socket = io(URL,{
+        query : {token},
+        secure: true,
+        transports: ['websocket'],
+      });
+      resolve(socket)
       // accessToken = res.token
       // socket = io(URL,{
       //   query : {token},
       //   secure: true,
       //   transports: ['websocket'],
       // });
-      resolve()
+
     })
     .catch(e=>{
       reject(e)
@@ -253,4 +319,4 @@ function fetchData( method, path, params, body){
   })//end promise
 }
 //
-export {textSearch,fetchSearch,fetchCellars,fetchData, login,getUser,saveCellar,saveWine,fetchWines}
+export {moveWines,deleteCellar,deleteWine,textSearch,fetchSearch,fetchCellars,fetchData, login,getUser,saveCellar,saveWine,fetchWines}

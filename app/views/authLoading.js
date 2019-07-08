@@ -2,8 +2,9 @@ import React from 'react'
 import {View,Text,ActivityIndicator,Button} from 'react-native'
 import AsyncStorage from '@react-native-community/async-storage';
 import styles from '../styles'
-import {getUser,login} from '../functions/api'
+import {getUser,login,fetchCellars} from '../functions/api'
 import {connect} from 'react-redux'
+import io from 'socket.io-client';
 
 
 import {bindActionCreators} from 'redux'
@@ -14,7 +15,7 @@ function mapStateToProps(state){
 }
 
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({getUser}, dispatch)
+  return bindActionCreators({getUser,fetchCellars}, dispatch)
 }
 
 class AuthLoading extends React.Component {
@@ -22,39 +23,33 @@ class AuthLoading extends React.Component {
   constructor(props) {
     super(props);
     this.state = {loading:true};
+    this.socket;
   }
-
+  setSocket(){
+    this.socket.on('cellarChanged',(data)=>{
+      this.props.fetchCellars(data)
+    })
+  }
   async componentDidMount() { //// AUTH PROCESS
 
 
-      login().then(()=>{
+      login().then((socket)=>{
+          this.socket = socket
           this.props.getUser()
-        // this.props.getUser().then((user)=>{
+          this.setSocket()
           this.props.navigation.navigate("cellars")
         }).catch(e=>{                               //can't get user : should be carer
           this.props.navigation.navigate("login")
         })
-      // }).catch(e=>{                             //can't log with this keychain
-      //   console.log("  can't log: "+e)
-      //   console.log("  resetKeychain, to auth")
-      //   resetKeychain()
-      //   this.props.navigation.navigate("login")
-      // })
 
   }
 
   render() {
     return (
       <View style={styles.container}>
-        {/* <Text style={styles.h2}>Check keychain, try login(), try getUser()</Text> */}
-        {/*loading ?*/
-          (this.state.loading) ?
           <View style={styles.container}>
-            <ActivityIndicator size="large" color="#0000ff" />
-            <Text style={styles.h2}>Checking credentials</Text>
+            <ActivityIndicator  />
           </View>
-          : null
-        }
       </View>
     );
   }

@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
 import {NavigationActions,SafeAreaView} from 'react-navigation';
-import { Text, View, StyleSheet,ImageBackground} from 'react-native'
+import { Text, View, StyleSheet,TouchableOpacity,ImageBackground} from 'react-native'
 import {bindActionCreators} from 'redux';
-import {resetWine} from '../../redux/actions'
+import {resetWine,setSearch,resetResults} from '../../redux/actions'
+import {fetchSearch} from '../../functions/api'
+import Checkbox from '../markers/checkbox.js';
 import {connect} from 'react-redux'
+import moment from 'moment'
+
+const year = moment().year()
 function findRoute(routes,index){
   if (routes[index].routes ){
       return findRoute(routes[index].routes,routes[index].index)
@@ -30,7 +35,7 @@ class FicheWineOption extends Component {
     return(
       <View style={styles.screenContainer}>
           <View style={[styles.screenStyle]}>
-              <Text style={[styles.screenTextStyle]} onPress={()=>void 0}>Déplacer de cave</Text>
+              <Text style={[styles.screenTextStyle]} onPress={this.props.navigateToScreen('choseCellar')}>Déplacer de cave</Text>
           </View>
           <View style={[styles.screenStyle]}>
               <Text style={[styles.screenTextStyle]} onPress={()=>void 0}>Supprimer ce Vin</Text>
@@ -66,10 +71,11 @@ class CellarsOption extends Component {
     return(
       <View style={styles.screenContainer}>
           <View style={[styles.screenStyle]}>
-              <Text style={[styles.screenTextStyle]} onPress={()=>this.props.navigateToScreen('filter')}>Chercher un vin</Text>
+              <Text style={[styles.screenTextStyle]} onPress={this.props.navigateToScreen('filter')}>Chercher un vin</Text>
           </View>
+
           <View style={[styles.screenStyle]}>
-              <Text style={[styles.screenTextStyle]} onPress={()=>this.props.navigateToScreen('editCellar')}>Ajouter une cave</Text>
+              <Text style={[styles.screenTextStyle]} onPress={this.props.setParams({activeSelection:true})}>Selectionner des caves</Text>
           </View>
       </View>
     )
@@ -83,11 +89,12 @@ let attribute = {
 }
 function mapStateToProps(state){
   return {
-    user: state.user
+    user: state.user,
+    search : state.search || {}
   }
 }
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({resetWine}, dispatch)
+  return bindActionCreators({resetWine,fetchSearch,setSearch,resetResults}, dispatch)
 }
 class DrawerContentComponents extends Component {
   constructor(props){
@@ -95,13 +102,14 @@ class DrawerContentComponents extends Component {
     this.state = {}
 
   }
-    navigateToScreen = ( route ) =>(
+    navigateToScreen = ( route,params = {}) =>(
         () => {
 
         const navigateAction = NavigationActions.navigate({
-            routeName: route
+            routeName: route,
+            params
         });
-        this.props.resetWine()
+        // this.props.resetWine()
         this.props.navigation.dispatch(navigateAction);
     })
     setParams = ( params,key ) =>(
@@ -115,9 +123,17 @@ class DrawerContentComponents extends Component {
     let routeName = findRoute(routes,index)
     return {...routeName}
     }
+  triggerSearch(){
+    this.props.resetResults()
+    setTimeout(()=>this.props.fetchSearch(this.props.search),500)
+    if (this.state.routeName == 'cellars') {
+      const navigateAction = NavigationActions.navigate({
+          routeName: 'results'
+      });
+      this.props.navigation.dispatch(navigateAction);
+    }
+  }
   render() {
-
-
     let {routeName,params,key} = this.state
     let Attribute = attribute[routeName]
     // console.log(this.props.items.find(it => it.key == this.props.activeItemKey ))
@@ -136,6 +152,60 @@ class DrawerContentComponents extends Component {
               navigateToScreen={(s)=>this.navigateToScreen(s)} />
             : void 0 }
             </View>
+            {(/cellars|wines/).test(this.state.routeName) ?
+            <View style={{paddingTop:40}}>
+                <TouchableOpacity onPress={()=>{
+                  this.props.search.minApogee != year ? this.props.setSearch({minApogee:year,maxApogee:year})
+                  : this.props.setSearch({minApogee:null,maxApogee:null})
+                  this.triggerSearch()
+                }}
+                  style={[styles.screenStyle]}>
+                  <Text style={[styles.screenTextStyle]}>{"Apogée " + year}</Text>
+                  <Checkbox
+                   onPress={()=>{
+                     this.props.search.minApogee != year ? this.props.setSearch({minApogee:year,maxApogee:year})
+                     : this.props.setSearch({minApogee:null,maxApogee:null})
+                     this.triggerSearch()
+                   }}
+                   checked={this.props.search.minApogee == year && this.props.search.maxApogee == year}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={()=>{
+                    this.props.search.favorite == true ? this.props.setSearch({favorite:null})
+                    : this.props.setSearch({favorite:true})
+                     this.triggerSearch()
+                  }}
+                  style={[styles.screenStyle]}>
+                  <Text style={[styles.screenTextStyle]}>Favoris</Text>
+                  <Checkbox
+                    onPress={()=>{
+                      this.props.search.favorite == true ? this.props.setSearch({favorite:null})
+                      : this.props.setSearch({favorite:true})
+                       this.triggerSearch()
+                    }}
+                   checked={this.props.search.favorite}
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={()=>{
+                    this.props.search.stock == true ? this.props.setSearch({stock:null})
+                    : this.props.setSearch({stock:true})
+                     this.triggerSearch()
+                  }}
+                  style={[styles.screenStyle]}>
+                  <Text style={[styles.screenTextStyle]}>En Stock</Text>
+                  <Checkbox
+                    onPress={()=>{
+                      this.props.search.stock == true ? this.props.setSearch({stock:null})
+                      : this.props.setSearch({stock:true})
+                       this.triggerSearch()
+                    }}
+                   checked={this.props.search.stock}
+                  />
+                </TouchableOpacity>
+            </View>
+            : void 0}
           </View>
           <View style={styles.screenContainer}>
               <View style={[styles.screenStyle]}>
@@ -166,15 +236,17 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     screenStyle: {
-        height: 30,
+        // height: 30,
         marginTop: 2,
         flexDirection: 'row',
+        justifyContent:'space-between',
         alignItems: 'center',
-        width: '100%'
+        // width: '100%'
     },
     screenTextStyle:{
         fontSize: 20,
         marginLeft: 20,
+
         textAlign: 'center'
     },
     selectedTextStyle: {

@@ -1,53 +1,21 @@
 import React, {Component} from 'react';
 import {TouchableOpacity,Modal,Text,View,Image,Dimensions,Alert} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
-import Icon from '../markers/icon.js';
 import {colors} from '../array/description'
 const cameraRetro = require('../../assets/camera-retro.png')
 
 import RNMlKit from 'react-native-firebase-mlkit';
 const { height, width } = Dimensions.get('window');
+// function mapStateToProps(state,props){
+//   return {
+//     picture : (state.pictures||[]).find(p => p.wineId == props.wineId)
+//     // favorite : state.profile.newWine.wine.favorite
+//   }
+// }
 export default class ManagePhoto extends React.PureComponent {
   constructor(props){
     super(props)
     this.state = {};
-  }
-  uploadImage(uri, mime = 'application/octet-stream') {
-    var self = this
-    return new Promise((resolve, reject) => {
-     self.setState({update:true})
-     let counter = Math.floor((Math.random() * 100) + 1);
-     const imageRef = firebase.storage().ref('image/' + self.props.uid).child('photo_' + counter);
-         var uploadTask = imageRef.put(uri, { contentType: mime })
-         uploadTask.on('state_changed', function(snapshot){
-            // Observe state change events such as progress, pause, and resume
-            // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-            const totalBytes = snapshot.totalBytes
-            self.setState({progress:(snapshot.bytesTransferred / totalBytes)})
-            switch (snapshot.state) {
-              case firebase.storage.TaskState.PAUSED: // or 'paused'
-
-                break;
-              case firebase.storage.TaskState.RUNNING: // or 'running'
-
-                break;
-            }
-          }, function(error) {
-              self.setState({update:false})
-              reject(error)
-          }, function() {
-
-            imageRef.getDownloadURL().then(function(downloadURL) {
-              self.setState({update:false})
-              resolve(downloadURL);
-            })
-            .catch((error) => {
-              self.setState({update:false})
-              reject(error)
-            })
-          })
-     })
-
   }
   manageImage(e) {
 
@@ -60,7 +28,7 @@ export default class ManagePhoto extends React.PureComponent {
         },
         cancelButtonTitle:'Annuler',
         mediaType: "photo",
-        quality: 1,
+        quality: 0.1,
         allowsEditing: true,
         takePhotoButtonTitle: null,
         cancelButtonTitle:'Annuler',
@@ -165,7 +133,7 @@ export default class ManagePhoto extends React.PureComponent {
           path: "images"
         },
         mediaType: "photo",
-        quality: 1,
+        quality: 0.1,
         allowsEditing: true,
         takePhotoButtonTitle: "Prenez une photo",
         cancelButtonTitle:'Annuler',
