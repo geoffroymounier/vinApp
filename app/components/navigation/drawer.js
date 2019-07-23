@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {NavigationActions,SafeAreaView} from 'react-navigation';
-import { Text, View, StyleSheet,TouchableOpacity,ImageBackground} from 'react-native'
+import { Text, View,Image, StyleSheet,TouchableOpacity,ImageBackground} from 'react-native'
 import {bindActionCreators} from 'redux';
 import {resetWine,setSearch,resetResults} from '../../redux/actions'
 import {fetchSearch} from '../../functions/api'
@@ -49,16 +49,20 @@ class WinesOption extends Component {
     let {activeItemKey} = this.props.activeItemKey
     return(
       <View style={styles.screenContainer}>
-          <View style={[styles.screenStyle]}>
+          <View style={{...styles.screenStyle,paddingHorizontal:10,justifyContent:'flex-start'}}>
+            <Image style={{height:20,width:20}} source={require('../../assets/add.png')} />
               <Text style={[styles.screenTextStyle]} onPress={this.props.navigateToScreen('editWine')}>Ajouter un Vin</Text>
           </View>
-          <View style={[styles.screenStyle]}>
+          <View style={{...styles.screenStyle,paddingHorizontal:10,justifyContent:'flex-start'}}>
+              <Image style={{height:20,width:20}} source={require('../../assets/search.png')} />
               <Text style={[styles.screenTextStyle]} onPress={this.props.navigateToScreen('filter')}>Recherche Détaillée</Text>
           </View>
-          <View style={[styles.screenStyle]}>
+          <View style={{...styles.screenStyle,paddingHorizontal:10,justifyContent:'flex-start'}}>
+              <Image style={{height:20,width:20}} source={require('../../assets/edit.png')} />
               <Text style={[styles.screenTextStyle]} onPress={this.props.navigateToScreen('editCellar')}>Modifier cette Cave</Text>
           </View>
-          <View style={[styles.screenStyle]}>
+          <View style={{...styles.screenStyle,paddingHorizontal:10,justifyContent:'flex-start'}}>
+              <Image style={{height:20,width:20}} source={require('../../assets/more.png')} />
               <Text style={[styles.screenTextStyle]} onPress={this.props.setParams({activeSelection:true})}>Selectionner des vins</Text>
           </View>
       </View>

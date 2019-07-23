@@ -21,7 +21,7 @@ function mapStateToProps(state,props){
   return{
     accords:accords,
     search : props.navigation.getParam('search') == true,
-    selected : state.wine[props.navigation.getParam('keyValue')] || []
+    selected : props.navigation.getParam('search') == true ? state.search[props.navigation.getParam('keyValue')] || [] : state.wine[props.navigation.getParam('keyValue')] || []
   }
 }
 function matchDispatchToProps(dispatch){
