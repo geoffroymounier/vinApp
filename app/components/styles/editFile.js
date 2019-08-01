@@ -6,10 +6,12 @@ const styles = StyleSheet.create({
     flexDirection:'row',justifyContent:'space-between',alignItems:'center',padding:5
   },
   cartoucheLeft: {
-    flexDirection:'row',flex:2,justifyContent:'flex-start'
+    flexDirection:'row',flex:1,justifyContent:'flex-start',alignItems:'flex-start',
+    paddingVertical:15,borderBottomWidth:1,borderColor:"#F5F5F5"
   },
   cartoucheRight: {
-    flexDirection:'row',flex:3,justifyContent:'flex-start'
+    flexDirection:'row',flex:1,justifyContent:'flex-end',alignItems:'flex-start',
+    paddingVertical:15,borderBottomWidth:1,borderColor:"#F5F5F5"
   }
 })
 export default styles

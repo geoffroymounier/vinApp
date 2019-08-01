@@ -1,12 +1,11 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Provider } from 'react-redux'
-import createStore from './app/redux/store/configureStore.js'
+import {store,persistor} from './app/redux/store/configureStore.js'
 import ReduxNavigation from './app/navigation/'
 import NavigationService from './app/functions/navigationService'
 
 // create our store
-const store = createStore()
 
 
 export default class App extends React.Component {

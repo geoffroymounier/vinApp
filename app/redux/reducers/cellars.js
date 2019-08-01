@@ -1,6 +1,7 @@
 import {
     SET_CELLARS,
-    DELETE_CELLARS
+    DELETE_CELLARS,
+    LOG_OUT
   } from "../constants/action-types"; // tous les types d'évenement qui peuvent impacter redux
 
 const initialState = null
@@ -9,8 +10,7 @@ const initialState = null
 export default function medications(state = initialState, action) {
   let newState;
   switch (action.type) {
-    case 'DELETE_CELLARS':
-
+    case DELETE_CELLARS:
       if (Array.isArray(action.payload)){
         newState = !state ? [] : [...state]
         for (var i in action.payload){ // or replace certain item in state
@@ -25,7 +25,7 @@ export default function medications(state = initialState, action) {
       return newState
       break;
 
-    case 'SET_CELLARS': //filter only carers
+    case SET_CELLARS: //filter only carers
       if (state == null || state.length == 0) return action.payload // state init
       else{
         newState = [...state];
@@ -37,6 +37,9 @@ export default function medications(state = initialState, action) {
         }
         return newState
       }
+      break;
+    case LOG_OUT :
+      return null
       break;
     default:
       return state

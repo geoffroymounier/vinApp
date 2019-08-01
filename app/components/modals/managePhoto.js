@@ -170,9 +170,11 @@ export default class ManagePhoto extends React.PureComponent {
         onPress={()=>{ this.props.photo ? this.manageImage() : this.uploadAvatar()
       }}
       style={{
-              width,
-              // backgroundColor:'red',
-              height:150,
+              width: '100%',
+              backgroundColor:'lightgray',
+              borderBottomRightRadius:40,
+              alignSelf:'center',
+
               justifyContent: 'center',
               alignItems: 'center',flex:1,
               overflow:'hidden'

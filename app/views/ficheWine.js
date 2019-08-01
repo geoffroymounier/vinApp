@@ -236,7 +236,7 @@ class Fiche extends React.Component {
             let accord = accordsValues[accords]
             return (
               <TouchableOpacity
-                onPress={()=>this.props.navigation.push('accords',{keyValue:accords})}
+                onPress={()=>this.props.navigation.navigate('accords',{keyValue:accords})}
                 key={index} style={{width:"100%",flexDirection:'row',alignSelf:'baseline',flexWrap: "wrap",alignItems:'center',paddingVertical:10}}>
                 <Image  source={accord.icon} style={{marginHorizontal:10,width:28,height:28}}/>
               {(this.props.wine[accords]||[]).map((e,i) => {
@@ -264,7 +264,7 @@ class Fiche extends React.Component {
             let caract = json[caracts]
             return (
               <TouchableOpacity
-                onPress={()=>this.props.navigation.push('aromes',{keyValue:caracts})}
+                onPress={()=>this.props.navigation.navigate('aromes',{keyValue:caracts})}
                 key={index} style={{width:"100%",flexDirection:'row',alignSelf:'baseline',flexWrap: "wrap",alignItems:'center',paddingVertical:10}}>
 
 

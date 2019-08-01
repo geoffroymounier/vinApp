@@ -1,6 +1,7 @@
 import {
     SET_CELLAR,
-    RESET_CELLAR
+    RESET_CELLAR,
+    LOG_OUT
   } from "../constants/action-types"; // tous les types d'évenement qui peuvent impacter redux
 
 const initialState = {};
@@ -8,13 +9,16 @@ const initialState = {};
 
 export default function user(state = initialState, action) {
 switch (action.type) {
-  case 'SET_CELLAR':
+  case SET_CELLAR:
     return {
       ...state,
       ...action.payload
     }
     break;
-  case 'RESET_CELLAR':
+  case LOG_OUT:
+    return {}
+    break;
+  case RESET_CELLAR:
     return {}
     break;
   default:

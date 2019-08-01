@@ -39,7 +39,7 @@ class Filter extends React.Component {
   triggerSearch(){
     this.props.resetResults()
     this.props.fetchSearch(this.props.wine)
-    this.props.navigation.push('results')
+    this.props.navigation.navigate('results')
   }
   componentDidMount(){
     this.props.navigation.addListener('willBlur',
@@ -88,7 +88,7 @@ class Filter extends React.Component {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={()=>this.props.navigation.push('country',{search:true})} style={styles.TouchableOpacity}>
+          <TouchableOpacity onPress={()=>this.props.navigation.navigate('country',{search:true})} style={styles.TouchableOpacity}>
             <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
               <View style={{flex:1,flexDirection:'row',justifyContent:'flex-start',alignItems:'center'}}>
 
@@ -97,7 +97,7 @@ class Filter extends React.Component {
               <Text style={styles.title}>{country || "" }</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=>this.props.navigation.push('region',{search:true})} style={styles.TouchableOpacity}>
+          <TouchableOpacity onPress={()=>this.props.navigation.navigate('region',{search:true})} style={styles.TouchableOpacity}>
             <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
               <View style={{flex:1,flexDirection:'row',justifyContent:'flex-start',alignItems:'center'}}>
 
@@ -108,7 +108,7 @@ class Filter extends React.Component {
                 >{region || "" }</Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=>this.props.navigation.push('appelation',{search:true})} style={styles.TouchableOpacity}>
+          <TouchableOpacity onPress={()=>this.props.navigation.navigate('appelation',{search:true})} style={styles.TouchableOpacity}>
             <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
               <View style={{flex:1,flexDirection:'row',justifyContent:'flex-start',alignItems:'center'}}>
 
@@ -201,7 +201,7 @@ class Filter extends React.Component {
           </TouchableOpacity>
 
           <TouchableOpacity
-            onPress={() => this.props.navigation.push('cepage',{search:true})}
+            onPress={() => this.props.navigation.navigate('cepage',{search:true})}
             style={styles.TouchableOpacity}>
             <View style={{flex:1,flexDirection:'row',justifyContent:'space-between'}}>
               <Text style={{...styles.undertitle,alignSelf:'flex-start'}}>{cepageValues.placeholder}</Text>
@@ -248,7 +248,7 @@ class Filter extends React.Component {
             let accord = accordsValues[accords]
             return (
               <TouchableOpacity
-                onPress={()=>this.props.navigation.push('accords',{keyValue:accords,search:true})}
+                onPress={()=>this.props.navigation.navigate('accords',{keyValue:accords,search:true})}
                 key={index} style={{width:"100%",flexDirection:'row',alignSelf:'baseline',flexWrap: "wrap",alignItems:'center',paddingVertical:10}}>
                 <Image  source={accord.icon} style={{marginHorizontal:10,width:28,height:28}}/>
               {(this.props.wine[accords]||[]).map((e,i) => {
@@ -276,7 +276,7 @@ class Filter extends React.Component {
             let caract = json[caracts]
             return (
               <TouchableOpacity
-                onPress={()=>this.props.navigation.push('aromes',{keyValue:caracts,search:true})}
+                onPress={()=>this.props.navigation.navigate('aromes',{keyValue:caracts,search:true})}
                 key={index} style={{width:"100%",flexDirection:'row',alignSelf:'baseline',flexWrap: "wrap",alignItems:'center',paddingVertical:10}}>
 
 

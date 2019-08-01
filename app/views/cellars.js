@@ -185,7 +185,7 @@ class Cellars extends React.Component {
 
   _onPressItem = (id: string) => {
     this.props.setCellar(this.props.cellars[id])
-    this.props.navigation.push('wines',{cellarName:this.props.cellars[id].name})
+    this.props.navigation.navigate('wines',{cellarName:this.props.cellars[id].name})
     // Actions.fiche({
     //       id:id,
     //       celar:this.props.[id],
@@ -293,7 +293,7 @@ class Cellars extends React.Component {
               <Text style={{...styles.title,textAlign:'center',marginVertical:20}}>
                 {messages.emptyCave}
               </Text>
-            <TouchableOpacity style={{width:'100%',justifyContent:'center',height:50,borderRadius:25,backgroundColor:'#530000'}} onPress={()=>this.props.navigation.push('editCellar')} >
+            <TouchableOpacity style={{width:'100%',justifyContent:'center',height:50,borderRadius:25,backgroundColor:'#530000'}} onPress={()=>this.props.navigation.navigate('editCellar')} >
                 <Text
                     style={{
                     textAlign: "center",
@@ -311,7 +311,7 @@ class Cellars extends React.Component {
         </View>
         <ButtonCustom content='Ajouter une Cave' onPress={()=>{
             this.props.resetCellar()
-            this.props.navigation.push('editCellar')
+            this.props.navigation.navigate('editCellar')
           }} />
   </View>
     )

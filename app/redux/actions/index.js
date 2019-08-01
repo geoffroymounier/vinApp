@@ -13,8 +13,10 @@ import {
     DELETE_WINES,
     RESET_SEARCH,
     SET_SEARCH,
-    DELETE_CELLARS
+    DELETE_CELLARS,
+    LOG_OUT
     } from "../constants/action-types";
+    export const logOut = item => ({ type: LOG_OUT, payload: item });
     export const setResults = item => ({ type: SET_RESULTS, payload: item });
     export const resetResults = item => ({ type: RESET_RESULTS, payload: item });
     export const setUser = item => ({ type: SET_USER, payload: item });

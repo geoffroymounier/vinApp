@@ -1,5 +1,5 @@
 import {
-    SET_USER
+    SET_USER,LOG_OUT
   } from "../constants/action-types"; // tous les types d'évenement qui peuvent impacter redux
 
 const initialState = {};
@@ -7,12 +7,14 @@ const initialState = {};
 
 export default function user(state = initialState, action) {
 switch (action.type) {
-  case 'SET_USER':
-  console.log(action.payload)
+  case SET_USER:
     return {
       ...state,
       ...action.payload
     }
+    break;
+  case LOG_OUT:
+    return {}
     break;
   default:
     return state

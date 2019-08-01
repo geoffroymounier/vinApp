@@ -32,7 +32,7 @@ class AuthLoading extends React.Component {
   }
   async componentDidMount() { //// AUTH PROCESS
 
-
+    console.log('mount AUTH again')
       login().then((socket)=>{
           this.socket = socket
           this.props.getUser()
@@ -45,6 +45,7 @@ class AuthLoading extends React.Component {
   }
 
   render() {
+    console.log('HERE')
     return (
       <View style={styles.container}>
           <View style={styles.container}>

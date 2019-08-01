@@ -15,35 +15,7 @@ function matchDispatchToProps(dispatch){
   return bindActionCreators({}, dispatch)
 }
 const { height, width } = Dimensions.get('window');
-async function facebookLogin() {
-  try {
-    // RNFBSDK  asks the user to authorize and share email and publicprofile
-    const result = await LoginManager.logInWithReadPermissions(['public_profile', 'email']);
 
-    // refusing to share
-    if (result.isCancelled) {
-      console.log('User cancelled request');
-      return
-    }
-
-    console.log(`Login success with permissions: ${result.grantedPermissions.toString()}`);
-
-    // here we retrieve the accessToken from facebook
-    const data = await AccessToken.getCurrentAccessToken();
-    if (!data) {
-      // handle this however suites the flow of your app
-      throw new Error('Something went wrong obtaining the users access token');
-    }
-
-    // let's login function with our fresh token
-    await login(data)
-
-    console.log(data)
-
-  } catch (e) {
-    console.error(e);
-  }
-}
 class Login extends React.Component {
   constructor(props){
     super(props)
@@ -53,7 +25,26 @@ class Login extends React.Component {
       translateYValue: new Animated.Value(0.1*height),
     };
   }
+  async facebookLogin() {
+    try {
+      // RNFBSDK  asks the user to authorize and share email and publicprofile
+      const result = await LoginManager.logInWithReadPermissions(['public_profile', 'email']);
+      // refusing to share
+      if (result.isCancelled) {
+        console.log('User cancelled request');
+        return
+      }
+      const data = await AccessToken.getCurrentAccessToken();
+      if (!data) {
+        throw new Error('Something went wrong obtaining the users access token');
+      }
 
+      await login(data)
+      this.props.navigation.navigate('AuthLoading')
+    } catch (e) {
+      console.error(e);
+    }
+  }
   componentWillMount(){
     this.start()
   }
@@ -108,7 +99,7 @@ class Login extends React.Component {
 
       </Animated.View>
           <Animated.View  style={animatedStyle}>
-            <TouchableOpacity onPress={() => facebookLogin()} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',width:0.9*width,height:50,borderRadius:25,marginBottom:5,backgroundColor:"#530000"}}>
+            <TouchableOpacity onPress={() => this.facebookLogin()} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',width:0.9*width,height:50,borderRadius:25,marginBottom:5,backgroundColor:"#530000"}}>
                 {/* <Text style={{color:'#FEFDF8',fontWeight:'600',fontSize:16}}>CHERCHER</Text> */}
                 {/* <Icon name={'facebook-f'}
                 regular

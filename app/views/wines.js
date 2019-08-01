@@ -196,7 +196,7 @@ class Wines extends React.Component {
   _onPressItem = (id: string) => {
     this.props.resetWine()
     this.props.setWine(this.props.wines[id])
-    this.props.navigation.push('ficheWine',{color:this.props.wines[id].color})
+    this.props.navigation.navigate('ficheWine',{color:this.props.wines[id].color})
   };
 
   componentDidMount(){
@@ -323,7 +323,7 @@ class Wines extends React.Component {
               this.props.navigation.setParams({showPicker:false,activeSelection:false,selected:0})
 
             } else if (buttonIndex === 2) {
-              this.props.navigation.push('choseCellar',{all:this.state.allSelect,selected:this.state.selected,cellarId:this.props.wines[0].cellarId})
+              this.props.navigation.navigate('choseCellar',{all:this.state.allSelect,selected:this.state.selected,cellarId:this.props.wines[0].cellarId})
               this.props.navigation.setParams({showPicker:false,activeSelection:false,selected:0})
             }
           },
@@ -388,7 +388,7 @@ class Wines extends React.Component {
               </Text>
             <TouchableOpacity style={{width:'100%',justifyContent:'center',height:50,borderRadius:25,backgroundColor:'#530000'}} onPress={()=>{
                 this.props.resetWine()
-                this.props.navigation.push('ficheWine')
+                this.props.navigation.navigate('ficheWine')
               }} >
                 <Text
                     style={{
@@ -407,7 +407,7 @@ class Wines extends React.Component {
         </View>
         <ButtonCustom content='Ajouter un Vin' onPress={()=>{
             this.props.resetWine()
-            this.props.navigation.push('ficheWine')
+            this.props.navigation.navigate('ficheWine')
           }} />
   </View>
     )

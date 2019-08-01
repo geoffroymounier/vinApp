@@ -1,8 +1,8 @@
-import {setUser,removeCellars,removeWines,setWines,setCellars,setResults} from '../redux/actions'
-import {getCredentials,rememberEmailPassword} from './keychainFunctions'
+import {setUser,logOut,removeCellars,removeWines,setWines,setCellars,setResults} from '../redux/actions'
+import {getCredentials,resetKeychain,rememberEmailPassword} from './keychainFunctions'
 
 import io from 'socket.io-client';
-const URL = "http://localhost:3001"
+const URL = "https://91d9de53.ngrok.io" // "http://localhost:3001"
 let token="";
 let accessToken = "";
 // var socket;
@@ -209,6 +209,15 @@ function getUser(){
 //   }
 // }
 //
+function logOutUser(){
+  return function(dispatch) {
+    return new Promise(async function(resolve,reject){
+      resetKeychain()
+      dispatch(logOut());
+      resolve()
+    })
+  }
+}
 function login(data){
   return new Promise(async function(resolve,reject){
 
@@ -237,13 +246,6 @@ function login(data){
         transports: ['websocket'],
       });
       resolve(socket)
-      // accessToken = res.token
-      // socket = io(URL,{
-      //   query : {token},
-      //   secure: true,
-      //   transports: ['websocket'],
-      // });
-
     })
     .catch(e=>{
       reject(e)
@@ -319,4 +321,4 @@ function fetchData( method, path, params, body){
   })//end promise
 }
 //
-export {moveWines,deleteCellar,deleteWine,textSearch,fetchSearch,fetchCellars,fetchData, login,getUser,saveCellar,saveWine,fetchWines}
+export {logOutUser,moveWines,deleteCellar,deleteWine,textSearch,fetchSearch,fetchCellars,fetchData, login,getUser,saveCellar,saveWine,fetchWines}

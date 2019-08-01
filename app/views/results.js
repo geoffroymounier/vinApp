@@ -171,7 +171,7 @@ class Wines extends React.Component {
   _onPressItem = (id: string) => {
     this.props.resetWine()
     this.props.setWine(this.props.wines[id])
-    this.props.navigation.push('ficheWine')
+    this.props.navigation.navigate('ficheWine')
 
     // Actions.fiche({
     //       id:id,

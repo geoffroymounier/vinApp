@@ -1,6 +1,7 @@
 import {
     SET_SEARCH,
-    RESET_SEARCH
+    RESET_SEARCH,
+    LOG_OUT
   } from "../constants/action-types"; // tous les types d'évenement qui peuvent impacter redux
 
 const initialState = {};
@@ -8,7 +9,7 @@ const initialState = {};
 
 export default function user(state = initialState, action) {
 switch (action.type) {
-  case 'SET_SEARCH':
+  case SET_SEARCH:
     let newState = {...state}
     for (var i in action.payload){
       if (action.payload[i] != null){
@@ -19,7 +20,10 @@ switch (action.type) {
     }
     return newState
     break;
-  case 'RESET_SEARCH':
+  case RESET_SEARCH:
+      return {}
+      break;
+  case LOG_OUT:
       return {}
       break;
   default:

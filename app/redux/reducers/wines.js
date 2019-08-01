@@ -1,7 +1,8 @@
 import {
     SET_WINES,
     DELETE_WINES,
-    RESET_WINES
+    RESET_WINES,
+    LOG_OUT
   } from "../constants/action-types"; // tous les types d'évenement qui peuvent impacter redux
 const Buffer = require('buffer').Buffer
 const initialState = null;
@@ -10,7 +11,7 @@ const initialState = null;
 export default function carers(state = initialState, action) {
 let newState;
 switch (action.type) {
-  case 'DELETE_WINES':
+  case DELETE_WINES:
 
     if (Array.isArray(action.payload)){
       newState = !state ? [] : [...state]
@@ -25,7 +26,7 @@ switch (action.type) {
 
     return newState
     break;
-  case 'SET_WINES': //filter only carers
+  case SET_WINES: //filter only carers
     newState = !state ? [] : [...state]
 
     if (newState.length == 0) return action.payload // state init
@@ -41,7 +42,10 @@ switch (action.type) {
     }
     return newState
     break;
-  case 'RESET_WINES':
+  case RESET_WINES:
+      return null
+      break;
+  case LOG_OUT:
       return null
       break;
   default:

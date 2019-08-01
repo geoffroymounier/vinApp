@@ -1,6 +1,7 @@
 import {
     SET_RESULTS,
-    RESET_RESULTS
+    RESET_RESULTS,
+    LOG_OUT
   } from "../constants/action-types"; // tous les types d'évenement qui peuvent impacter redux
 
 const initialState = null;
@@ -8,7 +9,7 @@ const initialState = null;
 
 export default function user(state = initialState, action) {
 switch (action.type) {
-  case 'SET_RESULTS':
+  case SET_RESULTS:
     let newState = !state ? [] : [...state]
     if (newState.length == 0) return action.payload // state init
     for (var i in action.payload){ // or replace certain item in state
@@ -19,7 +20,10 @@ switch (action.type) {
     }
     return newState
     break;
-  case 'RESET_RESULTS':
+  case RESET_RESULTS:
+      return null
+      break;
+  case LOG_OUT:
       return null
       break;
   default:

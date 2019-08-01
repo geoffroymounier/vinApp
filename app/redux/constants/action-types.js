@@ -12,3 +12,4 @@ export const SET_RESULTS = "SET_RESULTS";
 export const RESET_RESULTS = "RESET_RESULTS";
 export const SET_USER = "SET_USER"
 export const DELETE_WINES = "DELETE_WINES"
+export const LOG_OUT = "LOG_OUT"

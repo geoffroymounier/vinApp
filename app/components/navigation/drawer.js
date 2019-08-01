@@ -3,7 +3,8 @@ import {NavigationActions,SafeAreaView} from 'react-navigation';
 import { Text, View,Image, StyleSheet,TouchableOpacity,ImageBackground} from 'react-native'
 import {bindActionCreators} from 'redux';
 import {resetWine,setSearch,resetResults} from '../../redux/actions'
-import {fetchSearch} from '../../functions/api'
+import {fetchSearch,logOutUser} from '../../functions/api'
+import NavigationService from '../../functions/navigationService'
 import Checkbox from '../markers/checkbox.js';
 import {connect} from 'react-redux'
 import moment from 'moment'
@@ -98,7 +99,7 @@ function mapStateToProps(state){
   }
 }
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({resetWine,fetchSearch,setSearch,resetResults}, dispatch)
+  return bindActionCreators({resetWine,fetchSearch,setSearch,resetResults,logOutUser}, dispatch)
 }
 class DrawerContentComponents extends Component {
   constructor(props){
@@ -215,9 +216,14 @@ class DrawerContentComponents extends Component {
               <View style={[styles.screenStyle]}>
                   <Text style={[styles.screenTextStyle]}>Paramètres</Text>
               </View>
-              <View style={[styles.screenStyle]}>
+              <TouchableOpacity style={[styles.screenStyle]} onPress={()=>{
+                    this.props.logOutUser()
+                    this.props.navigation.navigate('AuthLoading')
+
+
+                }}>
                   <Text style={[styles.screenTextStyle]}>Deconnexion</Text>
-              </View>
+              </TouchableOpacity>
           </View>
         </SafeAreaView>
     )

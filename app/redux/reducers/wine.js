@@ -1,6 +1,7 @@
 import {
     SET_WINE,
-    RESET_WINE
+    RESET_WINE,
+    LOG_OUT
   } from "../constants/action-types"; // tous les types d'évenement qui peuvent impacter redux
 
 const initialState = {};
@@ -8,13 +9,16 @@ const initialState = {};
 
 export default function user(state = initialState, action) {
 switch (action.type) {
-  case 'SET_WINE':
+  case SET_WINE:
     return {
       ...state,
       ...action.payload
     }
     break;
-  case 'RESET_WINE':
+  case RESET_WINE:
+      return {}
+      break;
+  case LOG_OUT:
       return {}
       break;
   default:

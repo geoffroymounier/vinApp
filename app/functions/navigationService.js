@@ -1,7 +1,7 @@
 import { NavigationActions,StackActions } from 'react-navigation';
 
 let _navigator;
-var activeStack = "profile";
+var activeStack = "_cellar";
 function setTopLevelNavigator(navigatorRef) {
   _navigator = navigatorRef;
 }
