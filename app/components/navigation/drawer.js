@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import LinearGradient from 'react-native-linear-gradient'
 import {NavigationActions,SafeAreaView} from 'react-navigation';
 import { Text, View,Image, StyleSheet,TouchableOpacity,ImageBackground} from 'react-native'
 import {bindActionCreators} from 'redux';
@@ -18,52 +19,52 @@ function findRoute(routes,index){
     return routes[index]
 }
 
-class EditWineOption extends Component {
-  render(){
-    let {activeItemKey} = this.props.activeItemKey
-    return(
-      <View style={styles.screenContainer}>
-          <View style={[styles.screenStyle]}>
-              <Text style={[styles.screenTextStyle]} onPress={()=>void 0}>Supprimer ce Vin</Text>
-          </View>
-      </View>
-    )
-  }
-}
-class FicheWineOption extends Component {
-  render(){
-    let {activeItemKey} = this.props.activeItemKey
-    return(
-      <View style={styles.screenContainer}>
-          <View style={[styles.screenStyle]}>
-              <Text style={[styles.screenTextStyle]} onPress={this.props.navigateToScreen('choseCellar')}>Déplacer de cave</Text>
-          </View>
-          <View style={[styles.screenStyle]}>
-              <Text style={[styles.screenTextStyle]} onPress={()=>void 0}>Supprimer ce Vin</Text>
-          </View>
-      </View>
-    )
-  }
-}
+// class EditWineOption extends Component {
+//   render(){
+//     let {activeItemKey} = this.props.activeItemKey
+//     return(
+//       <View style={styles.screenContainer}>
+//           <View style={[styles.attributeStyle]}>
+//               <Text style={[styles.screenTextStyle]} onPress={()=>void 0}>Supprimer ce Vin</Text>
+//           </View>
+//       </View>
+//     )
+//   }
+// }
+// class FicheWineOption extends Component {
+//   render(){
+//     let {activeItemKey} = this.props.activeItemKey
+//     return(
+//       <View style={styles.screenContainer}>
+//           <View style={[styles.attributeStyle]}>
+//               <Text style={[styles.screenTextStyle]} onPress={this.props.navigateToScreen('choseCellar')}>Déplacer de cave</Text>
+//           </View>
+//           <View style={[styles.attributeStyle]}>
+//               <Text style={[styles.screenTextStyle]} onPress={()=>void 0}>Supprimer ce Vin</Text>
+//           </View>
+//       </View>
+//     )
+//   }
+// }
 class WinesOption extends Component {
   render(){
     let {activeItemKey} = this.props.activeItemKey
     return(
       <View style={styles.screenContainer}>
-          <View style={{...styles.screenStyle,paddingHorizontal:10,justifyContent:'flex-start'}}>
-            <Image style={{height:20,width:20}} source={require('../../assets/add.png')} />
+          {/* <View style={{...styles.attributeStyle,paddingHorizontal:10,justifyContent:'flex-start'}}>
+            <Image style={{height:20,width:20,tintColor:'white',marginRight:10}} source={require('../../assets/add.png')} />
               <Text style={[styles.screenTextStyle]} onPress={this.props.navigateToScreen('editWine')}>Ajouter un Vin</Text>
-          </View>
-          <View style={{...styles.screenStyle,paddingHorizontal:10,justifyContent:'flex-start'}}>
-              <Image style={{height:20,width:20}} source={require('../../assets/search.png')} />
+          </View> */}
+          <View style={{...styles.attributeStyle,paddingHorizontal:10,justifyContent:'flex-start'}}>
+              <Image style={{height:20,width:20,tintColor:'white',marginRight:10}} source={require('../../assets/search.png')} />
               <Text style={[styles.screenTextStyle]} onPress={this.props.navigateToScreen('filter')}>Recherche Détaillée</Text>
           </View>
-          <View style={{...styles.screenStyle,paddingHorizontal:10,justifyContent:'flex-start'}}>
-              <Image style={{height:20,width:20}} source={require('../../assets/edit.png')} />
+          <View style={{...styles.attributeStyle,paddingHorizontal:10,justifyContent:'flex-start'}}>
+              <Image style={{height:20,width:20,tintColor:'white',marginRight:10}} source={require('../../assets/edit.png')} />
               <Text style={[styles.screenTextStyle]} onPress={this.props.navigateToScreen('editCellar')}>Modifier cette Cave</Text>
           </View>
-          <View style={{...styles.screenStyle,paddingHorizontal:10,justifyContent:'flex-start'}}>
-              <Image style={{height:20,width:20}} source={require('../../assets/more.png')} />
+          <View style={{...styles.attributeStyle,paddingHorizontal:10,justifyContent:'flex-start'}}>
+              <Image style={{height:20,width:20,tintColor:'white',marginRight:10}} source={require('../../assets/more.png')} />
               <Text style={[styles.screenTextStyle]} onPress={this.props.setParams({activeSelection:true})}>Selectionner des vins</Text>
           </View>
       </View>
@@ -75,20 +76,21 @@ class CellarsOption extends Component {
     let {activeItemKey} = this.props.activeItemKey
     return(
       <View style={styles.screenContainer}>
-          <View style={[styles.screenStyle]}>
-              <Text style={[styles.screenTextStyle]} onPress={this.props.navigateToScreen('filter')}>Chercher un vin</Text>
+          <View style={[styles.attributeStyle]}>
+            <Image style={{height:20,width:20,tintColor:'white',marginRight:10}} source={require('../../assets/search.png')} />
+            <Text style={[styles.screenTextStyle]} onPress={this.props.navigateToScreen('filter')}>Chercher un vin</Text>
           </View>
-
-          <View style={[styles.screenStyle]}>
-              <Text style={[styles.screenTextStyle]} onPress={this.props.setParams({activeSelection:true})}>Selectionner des caves</Text>
+          <View style={[styles.attributeStyle]}>
+            <Image style={{height:20,width:20,tintColor:'white',marginRight:10}} source={require('../../assets/more.png')} />
+            <Text style={[styles.screenTextStyle]} onPress={this.props.setParams({activeSelection:true})}>Selectionner des caves</Text>
           </View>
       </View>
     )
   }
 }
 let attribute = {
-  editWine : EditWineOption,
-  ficheWine : FicheWineOption,
+  // editWine : EditWineOption,
+  // ficheWine : FicheWineOption,
   wines:WinesOption,
   cellars:CellarsOption
 }
@@ -141,11 +143,19 @@ class DrawerContentComponents extends Component {
   render() {
     let {routeName,params,key} = this.state
     let Attribute = attribute[routeName]
-    // console.log(this.props.items.find(it => it.key == this.props.activeItemKey ))
     return (
-        <SafeAreaView style={styles.container}>
+
+          <LinearGradient
+            style={{flex:1,paddingHorizontal:25,paddingBottom:20}}
+            start={{x:1, y: 0}}
+            end={{x: 0, y: 0.5}} colors={[ '#E02535','#9F041B']}
+          >
           <View style={{flex:1}}>
-            <View style={{...styles.screenStyle,...styles.screenContainer}}>
+            <TouchableOpacity onPress={()=>this.props.navigation.toggleDrawer()} >
+              <Image style={{height:20,width:20,tintColor:'white',marginTop:30,alignSelf:'flex-end'}} source={require('../../assets/times.png')} />
+            </TouchableOpacity>
+            <View style={{...styles.screenStyle}}>
+
                 {/* <ImageBackground source={require('../../assets/eye.png')} style={{flex: 1, width: 280, justifyContent: 'center'}} > */}
                     {/* <Text style={styles.screenTextStyle}>{this.props.user.email}</Text> */}
                     {/* <Text style={styles.headerText}>You can display here logo or profile image</Text> */}
@@ -212,20 +222,21 @@ class DrawerContentComponents extends Component {
             </View>
             : void 0}
           </View>
-          <View style={styles.screenContainer}>
-              <View style={[styles.screenStyle]}>
-                  <Text style={[styles.screenTextStyle]}>Paramètres</Text>
+          <View style={{...styles.screenContainer,alignItems:'flex-end'}}>
+              <View style={[styles.attributeStyle]}>
+                  <Text style={[styles.screenTextStyle]}>{this.props.user.name}</Text>
               </View>
-              <TouchableOpacity style={[styles.screenStyle]} onPress={()=>{
-                    this.props.logOutUser()
+              <TouchableOpacity style={[styles.logoutScreenStyle]} onPress={()=>{
+                  this.props.logOutUser().then(()=>{
                     this.props.navigation.navigate('AuthLoading')
-
-
+                  }).catch((e) => this.props.navigation.navigate('AuthLoading'))
                 }}>
-                  <Text style={[styles.screenTextStyle]}>Deconnexion</Text>
+                  <Image source={require("../../assets/logout.png")} style={{tintColor:"#E02535", height:20,width:20}} />
+                <Text style={[styles.logoutScreenTextStyle]}>déconnexion</Text>
               </TouchableOpacity>
           </View>
-        </SafeAreaView>
+        </LinearGradient>
+
     )
   }
 }
@@ -243,20 +254,36 @@ const styles = StyleSheet.create({
     screenContainer: {
         paddingTop: 20,
 
-        width: '100%',
+    },
+    attributeStyle: {
+        marginVertical: 8,
+
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     screenStyle: {
-        // height: 30,
-        marginTop: 2,
+        marginVertical: 12,
         flexDirection: 'row',
         justifyContent:'space-between',
         alignItems: 'center',
-        // width: '100%'
+    },
+    logoutScreenStyle:{
+        padding:5,
+        backgroundColor:"white",
+        borderRadius:20,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    logoutScreenTextStyle:{
+      fontSize: 20,
+      paddingHorizontal:8,
+      color:'#E02535',
+
     },
     screenTextStyle:{
         fontSize: 20,
-        marginLeft: 20,
-
+        color:'white',
+        alignSelf:'center',
         textAlign: 'center'
     },
     selectedTextStyle: {

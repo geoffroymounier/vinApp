@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {FlatList,Button,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
-import Checkbox from '../markers/checkbox.js';
+import {FlatList,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
+import Checkbox from '../markers/checkbox2.js';
+import Button from '../markers/button.js';
 import {SafeAreaView} from 'react-navigation'
 import Icon from '../markers/icon.js';
 import SearchBar from '../markers/searchbar.js';
@@ -21,7 +22,7 @@ function mapStateToProps(state,props){
   return{
     accords:accords,
     search : props.navigation.getParam('search') == true,
-    selected : props.navigation.getParam('search') == true ? state.search[props.navigation.getParam('keyValue')] || [] : state.wine[props.navigation.getParam('keyValue')] || []
+    selected : state[props.navigation.getParam('search') == true ? 'search' : 'wine'][props.navigation.getParam('keyValue')] || [],
   }
 }
 function matchDispatchToProps(dispatch){
@@ -89,7 +90,7 @@ class Accords extends React.PureComponent {
 
     return (
 
-      <SafeAreaView style={{flex:1}}>
+      <SafeAreaView style={{flex:1,backgroundColor:'white',marginTop:20,}}>
           <View
             style={{
 
@@ -117,9 +118,22 @@ class Accords extends React.PureComponent {
               keyExtractor={this._keyExtractor}
               renderItem={this._renderItem}
             />
-            <Button
+          <Button
+              style={{
+                color:'red',
+                margin:10,
+                marginHorizontal:20,
+                height:40,
+                backgroundColor: "#D72032", borderRadius: 20
+              }}
+              buttonStyle={{
+                fontSize:14,
+                color:'white',
+                backgroundColor:'transparent',
+                padding:0
+              }}
             onPress={() => this.props.navigation.goBack()}
-            title="Fermer"
+            content="Fermer"
           />
         </SafeAreaView>
     );

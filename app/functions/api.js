@@ -1,29 +1,18 @@
 import {setUser,logOut,removeCellars,removeWines,setWines,setCellars,setResults} from '../redux/actions'
 import {getCredentials,resetKeychain,rememberEmailPassword} from './keychainFunctions'
+import NavigationService from './navigationService'
 
 import io from 'socket.io-client';
-const URL = "https://91d9de53.ngrok.io" // "http://localhost:3001"
+// const URL =  "https://vinologie.ovh/api"
+const URL = "http://localhost:3000/api"
 let token="";
 let accessToken = "";
 // var socket;
 function deleteToken(){
-  console.log("token reset")
   token=""; //lol
   return
 }
-//
-// // function facebookAuth(email,password,qrCodeId){
-// //   return new Promise(function(resolve,reject){
-// //     fetchData("POST","/registerPatient",{qrCodeId},{email,password})
-// //     .then(async function(json){
-// //       console.log(json)
-// //       await rememberEmailPassword( email, password )
-// //       resolve();
-// //     })
-// //     .catch(e=>reject(e))
-// //   })
-// // }
-//
+
 function textSearch(query = {}){
   return function(dispatch) {
     return new Promise(async function(resolve,reject){
@@ -40,9 +29,9 @@ function textSearch(query = {}){
 function fetchSearch(query = {}){
   return function(dispatch) {
     return new Promise(async function(resolve,reject){
-
       fetchData("GET","/wines/",query)
       .then(array=>{
+        console.log(array)
         dispatch(setResults(array))
         resolve();
       })
@@ -151,7 +140,6 @@ function fetchCellars(cellarId=''){
     return new Promise(async function(resolve,reject){
       fetchData("GET","/cellars/"+cellarId)
       .then(array=>{
-        console.log(array)
         dispatch(setCellars(array))
         resolve();
       })
@@ -159,27 +147,11 @@ function fetchCellars(cellarId=''){
     })
   }
 }
-//
-// function getPairs(){
-//   console.log('getPairs')
-//   return function(dispatch) {
-//     return new Promise(async function(resolve,reject){
-//       fetchData("GET","/cellar")
-//       .then(array=>{
-//         dispatch(setPairs(array))
-//         resolve();
-//       })
-//       .catch(e=>reject(e))
-//     })
-//   }
-// }
-//
 function getUser(){
   return function(dispatch) {
     return new Promise(async function(resolve,reject){
       fetchData("GET","/user")
       .then(user=>{
-        console.log(user)
         if (!user){
           reject(e) //don't propagate null to redux. the case is treated in front (go to profileForm)
           return;
@@ -192,91 +164,112 @@ function getUser(){
     })
   }
 }
-//
-// //eats the wole user ! update redux after
-// function updateUser(user){
-//   console.log("there")
-//   return function(dispatch) {
-//     return new Promise(function(resolve,reject){
-//       console.log("here")
-//       fetchData("POST","/user",{},user)
-//       .then(json=>{
-//         dispatch(setUser(json.user));
-//         resolve(json.user);
-//       })
-//       .catch(e=>reject(e))
-//     })
-//   }
-// }
-//
-function logOutUser(){
-  return function(dispatch) {
-    return new Promise(async function(resolve,reject){
-      resetKeychain()
-      dispatch(logOut());
+function fetchCredentials(){
+    return new Promise(function(resolve,reject){
+      fetchData("GET","/authConnected")
+      .then(res=>{
+        socket = io(URL,{
+          query : {token:res.token},
+          secure: true,
+          transports: ['websocket'],
+        });
+        resolve(socket)
+      })
+      .catch(e=>reject(e))
+    })
+}
+function resetPass(email){
+  return new Promise(async function(resolve,reject){
+    fetchData("POST","/askForReset",{},{email}) //email dans body
+    .then((json)=>{
+      console.log({json})
       resolve()
     })
-  }
-}
-function login(data){
-  return new Promise(async function(resolve,reject){
-
-    //case : login attempt with customs credentials
-    let accessToken;
-    if (!data) {
-    //case : login with credentials stored
-      let credentials;
-      try{
-        credentials = await getCredentials();
-        accessToken  = credentials.password
-      }catch(e){
-        reject("no credentials")
-        return;
-      }
-    } else {
-      accessToken  = data.accessToken
-    }
-    fetchData("GET","/auth/facebook/token",{access_token:accessToken})
-    .then(async function(res){
-      if (data) await rememberEmailPassword(res.userId,res.accessToken)
-      token = res.token;
-      socket = io(URL,{
-        query : {token},
-        secure: true,
-        transports: ['websocket'],
-      });
-      resolve(socket)
-    })
     .catch(e=>{
+      console.log("ERREUR MAIL: "+e)
       reject(e)
     })
   })
 }
-//
+function askForConfirmation(email){
+  return new Promise(async function(resolve,reject){
+    fetchData("GET","/askForConfirmation",{email}).then((res)=>{
+      resolve()
+    }).catch(e=>{
+      reject(e)
+    })
+  })
+}
+function logOutUser(){
+  return function(dispatch) {
+    return new Promise(async function(resolve,reject){
+      fetchData("GET","/logout").then((res)=>{
+        resetKeychain()
+        dispatch(logOut());
+        resolve()
+      }).catch(e=>{
+        console.log(e)
+        reject(e)
+      })
+
+
+    })
+  }
+}
+
+function login(data,passport,name){
+  return new Promise(async function(resolve,reject){
+    //case : login attempt with customs credentials
+    let query;
+    let body;
+    if (passport == 'email'){
+      body = {name}
+      query = {email:data.email,password:data.password}
+    } else {
+      query = {access_token:data.accessToken}
+    }
+    console.log(query)
+    fetchData("POST","/auth/"+passport+"/token",query,body)
+    .then(async function(res){
+      await rememberEmailPassword(query,passport)
+      // if (data && !passport) await rememberEmailPassword(res.userId,res.accessToken)
+      resolve()
+    })
+    .catch(e=>{
+      console.log(e)
+      resetKeychain()
+      reject(e)
+    })
+  })
+}
 function fetchData( method, path, params, body){
-  return new Promise(function(resolve,reject){
-    console.log({token})
-    //params json to query
+  return new Promise(async function(resolve,reject){
+
+
     let query = "";
     if (params && Object.keys(params).length > 0){
       query = "?"+Object.keys(params)
       .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
       .join('&');
     }
-    console.log("fetch  "+method+"  "+URL+ path + query)
-    console.log({body:JSON.stringify(body)})
-
+    console.log(URL + path)
     fetch( URL+ path + query, {
       method: method,
+      credentials: 'include',
       body: JSON.stringify(body) || "",
       headers: {
         'Content-Type': 'application/json',
-        Authorization:"Bearer " + token
+        // Authorization:"Bearer " + token
       }
     }).then( async function (res){
-      console.log(res)
+
+      let credentials;
+      let text;
       switch(res.status){
         case 500:
+          text = await res.text()
+          reject(text || "bad password")
+          break;
         case 502:
           reject("server error")
           break;
@@ -284,13 +277,15 @@ function fetchData( method, path, params, body){
           reject("missing parameters")
           break;
         case 403:     // try login (renew token)
-          let credentials;
+
           try{
             credentials = await getCredentials()
-            console.log(credentials)
-            await login({accessToken:credentials.password})
+            // resetKeychain()
+            await login(credentials,credentials.type)
+
             return fetchData(method,path,params,body)
           }catch(e){
+
             reject("unauthorized, can't re-login")
           }
           break;
@@ -298,7 +293,8 @@ function fetchData( method, path, params, body){
           reject("not found")
           break;
         case 401:
-          reject("bad password")
+          text = await res.text()
+          reject(text || "bad password")
           break;
         case 410:
           reject("resource not available anymore")
@@ -308,7 +304,8 @@ function fetchData( method, path, params, body){
           return res.json() //this is a promise
           break;
         default:
-          console.log(res)
+          const statusText  = await res.text()
+          console.log(statusText)
           reject("strange error")
           break;
       }
@@ -321,4 +318,4 @@ function fetchData( method, path, params, body){
   })//end promise
 }
 //
-export {logOutUser,moveWines,deleteCellar,deleteWine,textSearch,fetchSearch,fetchCellars,fetchData, login,getUser,saveCellar,saveWine,fetchWines}
+export {askForConfirmation,resetPass,fetchCredentials,logOutUser,moveWines,deleteCellar,deleteWine,textSearch,fetchSearch,fetchCellars,fetchData, login,getUser,saveCellar,saveWine,fetchWines}

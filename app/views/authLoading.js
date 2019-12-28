@@ -1,11 +1,11 @@
 import React from 'react'
-import {View,Text,ActivityIndicator,Button} from 'react-native'
-import AsyncStorage from '@react-native-community/async-storage';
+import LinearGradient from 'react-native-linear-gradient'
+import {View,Text,ActivityIndicator,Button,Dimensions} from 'react-native'
 import styles from '../styles'
-import {getUser,login,fetchCellars} from '../functions/api'
+import {getUser,fetchCredentials,fetchCellars,login} from '../functions/api'
 import {connect} from 'react-redux'
 import io from 'socket.io-client';
-
+const { height, width } = Dimensions.get('window');
 
 import {bindActionCreators} from 'redux'
 
@@ -19,7 +19,11 @@ function matchDispatchToProps(dispatch){
 }
 
 class AuthLoading extends React.Component {
-
+  static navigationOptions = ({ navigation  }) => {
+    return {
+      header:null
+    }
+  }
   constructor(props) {
     super(props);
     this.state = {loading:true};
@@ -30,24 +34,41 @@ class AuthLoading extends React.Component {
       this.props.fetchCellars(data)
     })
   }
-  async componentDidMount() { //// AUTH PROCESS
-
-    console.log('mount AUTH again')
-      login().then((socket)=>{
+  fetchCred(){
+    return new Promise((resolve,reject) => {
+      fetchCredentials().then((socket)=>{
           this.socket = socket
           this.props.getUser()
           this.setSocket()
-          this.props.navigation.navigate("cellars")
-        }).catch(e=>{                               //can't get user : should be carer
-          this.props.navigation.navigate("login")
+          resolve()
+        }).catch(()=>{
+          reject()
         })
+    })
+  }
+  async componentDidMount() { //// AUTH PROCESS
 
+    this.fetchCred().then(()=>{
+      this.props.navigation.navigate("cellars")
+    }).catch(async e=>{
+      this.props.navigation.navigate("login")
+    })
   }
 
   render() {
-    console.log('HERE')
     return (
-      <View style={styles.container}>
+      <View style={{flex:1}}>
+        <LinearGradient
+          style={{position:'absolute',
+            transform: [
+              { translateX: - width * 1.5 },
+              // {rotateY : "25deg"},
+              {skewX : "-70deg"}
+            ],
+            width:2*width,height:400,paddingHorizontal:25,paddingBottom:20}}
+          start={{x:1, y: 0}}
+          end={{x: 0, y: 0.5}} colors={[ '#E02535','#9F041B']}
+        />
           <View style={styles.container}>
             <ActivityIndicator  />
           </View>

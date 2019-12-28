@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {FlatList,Button,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
-import Checkbox from '../markers/checkbox.js';
+import {FlatList,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
+import Checkbox from '../markers/checkbox2.js';
+import Button from '../markers/button.js';
 import {SafeAreaView} from 'react-navigation'
 import Icon from '../markers/icon.js';
 import SearchBar from '../markers/searchbar.js';
@@ -10,9 +11,8 @@ import {bindActionCreators} from 'redux'
 import {setWine,setSearch} from '../../redux/actions'
 import {connect} from 'react-redux'
 function mapStateToProps(state,props){
-
-  let appelations = state.wine.region ? alasql('SELECT *, appelation as label  FROM ? WHERE region = "'+state.wine.region+'" ORDER BY appelation ASC ' ,[raw]) :
-                    state.wine.country ? alasql('SELECT *, appelation as label  FROM ? WHERE country = "'+state.wine.country+'" ORDER BY appelation ASC ' ,[raw]) :
+  let {country,region,appelation} = state[props.navigation.getParam('search') == true ? 'search' : 'wine']
+  let appelations = country ? alasql('SELECT *, appelation as label  FROM ? WHERE country_code = "'+country+'" ORDER BY appelation ASC ' ,[raw]) :
                     alasql('SELECT *, appelation as label FROM ? ORDER BY appelation ASC ' ,[raw])
 
   appelations.forEach((r,index) => r.key = index)
@@ -20,7 +20,7 @@ function mapStateToProps(state,props){
   return{
     appelations : appelations,
     search : props.navigation.getParam('search') == true,
-    selected : state.wine.appelation
+    selected : appelation
   }
 }
 function matchDispatchToProps(dispatch){
@@ -67,7 +67,7 @@ class Appelation extends React.PureComponent {
     }
     if (id != -1 ) {
       newWine.region = this.props.appelations[id].region
-      newWine.country = this.props.appelations[id].country
+      newWine.country = this.props.appelations[id].country_code
     }
 
     this.props.search ? this.props.setSearch(newWine) : this.props.setWine(newWine)
@@ -88,7 +88,7 @@ class Appelation extends React.PureComponent {
 
     return (
 
-      <SafeAreaView style={{flex:1}}>
+      <View style={{flex:1,backgroundColor:'white',paddingTop:30}}>
           <View
             style={{
 
@@ -118,10 +118,23 @@ class Appelation extends React.PureComponent {
               renderItem={this._renderItem}
             />
             <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Fermer"
-          />
-        </SafeAreaView>
+                style={{
+                  color:'red',
+                  margin:10,
+                  marginHorizontal:20,
+                  height:40,
+                  backgroundColor: "#D72032", borderRadius: 20
+                }}
+                buttonStyle={{
+                  fontSize:14,
+                  color:'white',
+                  backgroundColor:'transparent',
+                  padding:0
+                }}
+              onPress={() => this.props.navigation.goBack()}
+              content="Fermer"
+            />
+      </View>
     );
   }
 }

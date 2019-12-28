@@ -2,9 +2,12 @@ import React, {Component} from 'react';
 import {TouchableOpacity,Modal,Text,View,Image,Dimensions,Alert} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import {colors} from '../array/description'
-const cameraRetro = require('../../assets/camera-retro.png')
-
+import raw from '../array/raw'
+import alasql from 'alasql'
 import RNMlKit from 'react-native-firebase-mlkit';
+const cameraRetro = require('../../assets/camera-retro.png')
+const Buffer = require('buffer').Buffer
+
 const { height, width } = Dimensions.get('window');
 // function mapStateToProps(state,props){
 //   return {
@@ -28,7 +31,7 @@ export default class ManagePhoto extends React.PureComponent {
         },
         cancelButtonTitle:'Annuler',
         mediaType: "photo",
-        quality: 0.1,
+        quality: 0.3,
         allowsEditing: true,
         takePhotoButtonTitle: null,
         cancelButtonTitle:'Annuler',
@@ -67,20 +70,22 @@ export default class ManagePhoto extends React.PureComponent {
     RNMlKit.deviceTextRecognition(uri).then((deviceTextRecognition)=>{
       // console.log('Text Recognition On-Device', deviceTextRecognition.res);
       // alert(deviceTextRecognition.resultText)
-      let result = ''
+      let results = []
       for (var i in deviceTextRecognition){
-        if (deviceTextRecognition[i].resultText) result = (deviceTextRecognition[i].resultText)
+        if (deviceTextRecognition[i].resultText) results.push(...deviceTextRecognition[i].resultText.toLowerCase().split(/\'|\.|,|\s|\n/g))
       }
 
-      let results = result.split(/\n/)
+      let acc = results.reduce((acc,r,i) => acc + (i == 0 ? '' : ',') + '"' + r + '"','')
 
-      const appelations = this.props.appelations
+      let appelations =  alasql('SELECT * FROM ? WHERE LOWER(region) IN ('+acc+')  ' ,[raw])
+
       let json = {}
       let proposition = []
       let choice = []
       let annee;
       let array = []
       for (var i in results){
+
         // console.log(results[i])
         if ((/(19|20)\d{2}/).test(results[i].replace(/\s/g,''))) json.annee = parseInt(results[i].replace(/\s/g,''))
         else {
@@ -118,6 +123,7 @@ export default class ManagePhoto extends React.PureComponent {
         // notuhing
       }
     }).catch((e) => {
+      console.log(e)
       console.log('error')
       // console.log(e);
     })
@@ -165,13 +171,14 @@ export default class ManagePhoto extends React.PureComponent {
 
 
   render(){
+    let base64 = this.props.photo ? new Buffer(this.props.photo).toString() : null
     return(
       <TouchableOpacity
         onPress={()=>{ this.props.photo ? this.manageImage() : this.uploadAvatar()
       }}
       style={{
               width: '100%',
-              backgroundColor:'lightgray',
+              backgroundColor:'#CCCCCC',
               borderBottomRightRadius:40,
               alignSelf:'center',
 
@@ -179,7 +186,7 @@ export default class ManagePhoto extends React.PureComponent {
               alignItems: 'center',flex:1,
               overflow:'hidden'
             }}>
-      <View>
+      <View style={{width:"100%",height:"100%",justifyContent:'center'}}>
         {this.state.visible ?
           <Modal
             animationType="slide"
@@ -209,8 +216,8 @@ export default class ManagePhoto extends React.PureComponent {
 
       {this.props.photo ?
       <Image
-        style={{width,height: 200}}
-        source={{uri: this.props.photo}}
+        style={{height:"100%",width:"100%"}}
+        source={{uri: base64}}
       />
       :
       <Image

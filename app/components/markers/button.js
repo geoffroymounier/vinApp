@@ -17,7 +17,7 @@ export default class Button extends React.Component {
         }}
         style={this.props.style}
       >
-        <Text style={styles.button}>
+        <Text style={{...styles.button,...this.props.buttonStyle}}>
           {this.props.content}
         </Text>
       </TouchableOpacity>

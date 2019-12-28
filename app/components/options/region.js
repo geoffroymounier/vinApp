@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {FlatList,View,Button,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
-import Checkbox from '../markers/checkbox.js';
+import {FlatList,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
+import Checkbox from '../markers/checkbox2.js';
+import Button from '../markers/button.js';
 import {SafeAreaView} from 'react-navigation'
 import Icon from '../markers/icon.js';
 import SearchBar from '../markers/searchbar.js';
@@ -10,14 +11,14 @@ import {bindActionCreators} from 'redux'
 import {setWine,setSearch} from '../../redux/actions'
 import {connect} from 'react-redux'
 function mapStateToProps(state,props){
-
-  let regions = !state.wine.country ? alasql('SELECT *, region as label FROM ? GROUP BY region ORDER BY region ASC ' ,[raw]) : alasql('SELECT *, region as label  FROM ? WHERE country = "'+state.wine.country+'" GROUP BY region ORDER BY region ASC ' ,[raw])
+  let {country,region} = state[props.navigation.getParam('search') == true ? 'search' : 'wine']
+  let regions = !country ? alasql('SELECT *, region as label FROM ? GROUP BY region ORDER BY region ASC ' ,[raw]) : alasql('SELECT *, region as label  FROM ? WHERE country = "'+country+'" GROUP BY region ORDER BY region ASC ' ,[raw])
   regions.forEach((r,index) => r.key = index)
 
   return{
     regions : regions,
     search : props.navigation.getParam('search') == true,
-    selected : state.wine.region
+    selected : region
   }
 }
 function matchDispatchToProps(dispatch){
@@ -82,7 +83,7 @@ class Region extends React.PureComponent {
 
     return (
 
-      <SafeAreaView style={{flex:1}}>
+      <View style={{flex:1,backgroundColor:'white',paddingTop:30,}}>
           <View
             style={{
               // flex:1,
@@ -112,10 +113,23 @@ class Region extends React.PureComponent {
               renderItem={this._renderItem}
             />
             <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Fermer"
-          />
-        </SafeAreaView>
+                style={{
+                  color:'red',
+                  margin:10,
+                  marginHorizontal:20,
+                  height:40,
+                  backgroundColor: "#D72032", borderRadius: 20
+                }}
+                buttonStyle={{
+                  fontSize:14,
+                  color:'white',
+                  backgroundColor:'transparent',
+                  padding:0
+                }}
+              onPress={() => this.props.navigation.goBack()}
+              content="Fermer"
+            />
+      </View>
     );
   }
 }

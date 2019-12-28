@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button,Platform, Alert,StyleSheet, Text, View,Image,ScrollView,KeyboardAvoidingView,TextInput,Picker,TouchableOpacity} from 'react-native';
+import {Button,Keyboard,Dimensions,Platform, Alert,StyleSheet, Text, View,Image,ScrollView,KeyboardAvoidingView,TextInput,Picker,TouchableOpacity} from 'react-native';
 import Icon from '../components/markers/icon.js'
 import ModalMultipleChoice from '../components/modals/modalMultipleChoice.js'
 import ModalSearchChoice from '../components/modals/modalSearchChoice.js'
@@ -20,6 +20,7 @@ import {bindActionCreators} from 'redux';
 import {setCellar} from '../redux/actions'
 import {saveCellar} from '../functions/api'
 import {checkData} from '../functions/functions'
+const { height, width } = Dimensions.get('window');
 function mapStateToProps(state){
   return {
     cellar : state.cellar
@@ -31,19 +32,7 @@ function matchDispatchToProps(dispatch){
 }
 
 class EditFile extends React.Component {
-  static navigationOptions = ({ navigation  }) => {
-    const { params = {} } = navigation.state;
-    return {
-    headerTitle : 'Editer ce vin',
-    headerRight:null,
-    headerLeft: (
-      <Button
-        onPress={() => params.checkLeave()}
-        title={"Retour"}
-      />
-    )
-  }
-  }
+
   constructor(props){
     super(props);
     this.state = {
@@ -51,7 +40,7 @@ class EditFile extends React.Component {
   }
 
 
-  checkLeave = () => {
+  checkSave = () => {
 
     if (!checkData(this.props.cellar,this.initialProps) == true) return this.props.navigation.goBack()
     else {
@@ -62,104 +51,90 @@ class EditFile extends React.Component {
   }
   componentDidMount(){
     this.initialProps = Object.assign({},this.props.cellar)
-    this.props.navigation.setParams({checkLeave: this.checkLeave})
   }
 
   render() {
 
     let {name,description,commentaire} = this.props.cellar
-
-
     return (
+      <TouchableOpacity activeOpacity={1} onPress={()=>Keyboard.dismiss()} style={{flex:1,justifyContent:'flex-end'}}>
+      <KeyboardAvoidingView behavior='padding'  keyboardShouldPersistTaps="never" >
+        <View style={{alignSelf:'flex-end',width,backgroundColor:'#FCF7F7',borderRadius:20}}>
+          <Text style={{...styles.title,alignSelf:'center',color:'#5D5D5D'}}>Editer la cave</Text>
+            <View style={{flexDirection:'row',alignItems:'flex-start'}}>
+              <View style={{flex:1}}>
 
-      <KeyboardAvoidingView behavior='position' keyboardShouldPersistTaps="always" >
+                  <TouchableOpacity onPress={()=>this.refs.name.focus()} style={{margin:10,padding:4,backgroundColor:'white'}}>
+                    <Text style={{fontSize:14,color:'#848484'}}>Nom</Text>
+                    <TextInput placeholderTextColor = "#848484"
+                      autoCapitalize='words'
+                      ref='name'
+                      placeholder={'Nom de la Cave'}
+                      style={styles.appelation} value={name}
+                      onChangeText={(name)=>this.props.setCellar({name})}/>
+                   </TouchableOpacity>
+                   <TouchableOpacity onPress={()=>this.refs.description.focus()} style={{margin:10,padding:4,backgroundColor:'white'}}>
+                     <Text style={{fontSize:14,color:'#848484'}}>Description</Text>
+                     <TextInput placeholderTextColor = "#515151"
+                       autoCapitalize='words'
+                       ref='description'
+                       placeholder={'Description'}
+                       style={styles.appelation} value={description}
+                       onChangeText={(description)=>this.props.setCellar({description})}/>
+                    </TouchableOpacity>
+                    {/* <TouchableOpacity onPress={()=>this.refs.commentaire.focus()} style={{margin:10,padding:4,backgroundColor:'white'}}>
+                      <Text style={{fontSize:14,color:'#848484'}}>Commentaire</Text>
+                      <TextInput placeholderTextColor = "#515151"
+                        autoCapitalize='words'
+                        ref='commentaire'
+                        placeholder='Insérez vos notes'
+                        placeholder={'Description'}
+                        multiline
+                        style={styles.appelation} value={commentaire}
+                        onChangeText={(commentaire)=>this.props.setCellar({commentaire})}/>
+                     </TouchableOpacity> */}
+                     <View style={{flexDirection:'row'}}>
+                       <TouchableOpacity
+                         style={{margin:10,marginHorizontal:30,flex:1,height:40,borderRadius:100,backgroundColor:'#D72032'}}
+                         onPress={()=>{
+                           this.checkSave()
+                         }}
+                         >
+                           <Text
+                               style={{
+                               textAlign: "center",
+                               padding: 10,
+                               color: "white",
+                               fontSize: 14
+                           }}>Sauvegarder</Text>
+                         </TouchableOpacity>
+                         <TouchableOpacity
+                           style={{margin:10,marginHorizontal:30,flex:1,height:40,borderRadius:100,borderWidth:1,backgroundColor:'#F3F3F3',borderColor:'#979797'}}
+                           onPress={()=>{
+                             this.props.navigation.goBack()
+                           }}
+                           >
+                             <Text
+                                 style={{
+                                 textAlign: "center",
+                                 padding: 10,
+                                 color: "#5D5D5D",
+                                 fontSize: 14
+                             }}>Annuler</Text>
+                           </TouchableOpacity>
 
-      <ScrollView keyboardShouldPersistTaps="always" keyboardDismissMode="on-drag" style={{padding:0,backgroundColor:"white"}}>
-
-      <View style={{...styles.container,justifyContent:'flex-start',backgroundColor:"white",marginBottom:50}}>
-        {/* <View style={{...styles.container,alignItems:'flex-start'}}>
-          <ManagePhoto
-            foundWine={(json)=> {
-              if (json.proposition.length == 1){
-                let choice = json.proposition[0]
-                Alert.alert("Recherche fructueuse !",`Nous avons trouvé un vin dans notre base ! : \n ${choice.appelation} (${colors[choice.color].label}) \n ${choice.region}` ,
-                [
-                  {text: 'OK', onPress: () => this.setState({wine:{...this.state.cellar,annee:json.annee || void 0,color:choice.color,appelation:choice.appelation,region:choice.region,country:choice.country}})},
-                  {text: 'Annuler', onPress: () => void 0}
-                ])
-              } else {
-                Alert.alert("Recherche fructueuse !",'Nous avons trouvé plusieurs vins dans notre base !',
-                [
-                  {text: 'Choisir', onPress: () => this.setState({choices : json.proposition,wine:{...this.state.cellar,annee:json.annee || void 0}})},
-                  {text: 'Annuler', onPress: () => void 0}
-                ])
-              }
-            }}
-            appelations = {this.appelations}
-            addPicture={(photo) => this.props.setCellar({photo})}
-            photo={photo} />
-        </View> */}
-
-
-
-        <View style={{...styles.container,flexDirection:'row',alignItems:'flex-start'}}>
-          <View style={{...styles.container}}>
-          <View style={{borderTopWidth:5,borderBottomWidth:5,paddingVertical:5,width:"100%"}}>
-              <TouchableOpacity onPress={()=>this.refs.name.focus()} style={{...styles.TouchableOpacity,borderBottomWidth:0}}>
-                <TextInput placeholderTextColor = "#515151"
-                  autoCapitalize='words'
-                  multiline
-                  ref='name'
-                  placeholder={'Nom de la Cave'}
-                  style={styles.appelation} value={name}
-                  onChangeText={(name)=>this.props.setCellar({name})}/>
-               </TouchableOpacity>
-             <TouchableOpacity onPress={()=>this.refs.description.focus()} style={{...styles.TouchableOpacity,borderBottomWidth:0}}>
-               <TextInput placeholderTextColor = "#515151"
-                 autoCapitalize='words'
-                 multiline
-                 ref='description'
-                 placeholder={'Description'}
-                 style={styles.appelation} value={description}
-                 onChangeText={(description)=>this.props.setCellar({description})}/>
-              </TouchableOpacity>
-          </View>
-
-
-
-          <Text style={styles.title}>Mon Commentaire :</Text>
-          <View style={{flexDirection:'row',alignSelf:'baseline',flexWrap: "wrap"}}>
-            <TextInput
-            style={{flex:1,padding:10,paddingBottom:30}}
-            multiline
-            value={commentaire}
-            placeholder='Insérez vos notes'
-            onChangeText={(commentaire)=>this.props.setCellar({commentaire})}/>
-          </View>
-
-          {/* <View style={{width:"100%"}}>
-
-            <Accordion
-              style={{width:"100%"}}
-              sections={SECTIONS}
-              activeSections={this.state.activeSections}
-              // renderSectionTitle={this._renderSectionTitle}
-              renderHeader={this._renderHeader}
-              renderContent={this._renderContent}
-              onChange={this._updateSections}
-              />
-          </View> */}
+                     </View>
 
 
-
-
+              </View>
+            </View>
         </View>
-        </View>
-      </View>
 
-      </ScrollView>
+        </KeyboardAvoidingView>
+        </TouchableOpacity>
 
-    </KeyboardAvoidingView>
+
+
 
 
 
@@ -167,82 +142,21 @@ class EditFile extends React.Component {
     );
   }
 }
-const pickerStyle = {
-    viewContainer:{alignSelf:'center',paddingHorizontal:0}
-  }
+
 const styles = StyleSheet.create({
-  TouchableOpacity : {
-    flexDirection:'row',
-    width:'100%',
-    justifyContent:'space-between',alignItems:'center',
-    paddingHorizontal:5},
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-
-
-  },
-  label:{
-    alignSelf:'center',
-    fontSize: 20,
-    textAlign: 'left',
-    marginRight:20,
-  },
-
-  textInputPicker:{
-    color:'#262626',
-    // padding:10,
-
-    // paddingBottom:8,
-    fontSize:16,
-    justifyContent:'center',
-    alignSelf:'center',
-    alignItems:'center'
-  },
-  textInput:{
-    borderWidth:0,
-
-    borderColor:'transparent'
-  },
-  chip:{
-    margin:5,
-  },
   title: {
     fontSize: 18,
     alignSelf:'flex-start',
     textAlign: 'left',
     margin: 10,
   },
-  domain: {
-    fontSize: 20,
-    color:"#262626",
-    alignSelf:'flex-start',
-    textAlign: 'left',
-    marginLeft: 10,
-    marginRight: 10,
-  },
   appelation: {
-    color:"#262626",
-    fontWeight:"800",
-    fontSize: 20,
+    color:'#848484',
+    fontWeight:"600",
+    fontSize: 16,
     alignSelf:'flex-start',
     textAlign: 'left',
-    marginHorizontal: 10,
     marginVertical: 3,
-  },
-  undertitle: {
-    fontSize: 16,
-    alignSelf:'center',
-    alignItems:'center',
-    justifyContent:'center',
-    textAlign: 'left',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
   },
 });
 

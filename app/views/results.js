@@ -1,215 +1,73 @@
 import React, {Component} from 'react';
-// import {Actions} from 'react-native-router-flux'
 import {Animated,Dimensions,ActivityIndicator,InteractionManager,Easing,Platform,ActionSheetIOS,Alert,FlatList,TouchableHighlight,StyleSheet, Text, View,Image,ScrollView,KeyboardAvoidingView,TextInput,Picker,TouchableOpacity} from 'react-native';
-// import Icon from 'react-native-vector-icons/FontAwesome5';
-// import {Chip} from 'react-native-paper';
-// import RNPickerSelect from 'react-native-picker-select';
-// import ManagePhoto from '../components/modals/managePhoto'
-// import firebase from 'react-native-firebase';
+import WineItem from '../components/list/wineItem'
 import Button from '../components/markers/button'
 import messages from '../components/texts/'
 const heartFull = require('../assets/heart-full.png')
-// import { Searchbar } from 'react-native-paper';
-// import {carafageArray,makeRegionArray,makeStockArray,makeYearArray} from '../components/array/pickers'
 import {caracteristiques,colors,cepageValues,dialog,json,regions} from '../components/array/description'
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
-import {fetchWines} from '../functions/api'
-import {setWine,resetWine} from '../redux/actions'
+import {fetchSearch} from '../functions/api'
+import {setWine,resetWine,resetResults} from '../redux/actions'
 
 const { height, width } = Dimensions.get('window');
 
 function mapStateToProps(state,props){
+  console.log(state.results)
   return {
     wines : (state.results),
+    search : state.search
   }
 }
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({fetchWines,setWine,resetWine},dispatch)
-}
-
-
-class MyListItem extends React.Component {
-  constructor(props){
-    super(props)
-    this.state = {
-      width: new Animated.Value(0),
-      opacityValue: new Animated.Value(0),
-      opacityText: new Animated.Value(0),
-      translateYValue: new Animated.Value(-0.1*height),
-    };
-  }
-  componentWillMount(){
-    this.start()
-  }
-  _onPress = () => {
-
-    this.selectIt(1,()=>{
-      this.selectIt(0,()=> void 0)
-      this.props.onPressItem(this.props.id)
-      this.selectIt(0,()=> void 0)
-    })
-  };
-
-  selectIt(value,callback){
-    Animated.timing(this.state.width,{
-      toValue: value,
-      duration: 150,
-      easing : Easing.linear
-    }).start(()=>callback())
-  }
-  start(){
-    Animated.parallel([
-      Animated.timing(this.state.opacityValue, {
-        toValue: 1, // Animate to final value of 1
-        duration:150,
-        useNativeDriver:true,
-        delay:300
-      }),
-      Animated.timing(this.state.opacityText, {
-        toValue: 1, // Animate to final value of 1
-        duration:150,
-        useNativeDriver:true,
-        delay:0
-      }),
-      Animated.timing(this.state.translateYValue, {
-        toValue: 0,
-        duration:200,
-        useNativeDriver:true,
-        delay:300
-      }),
-    ]).start();
-  }
-  render() {
-    const { opacityValue, translateYValue , opacityText } = this.state;
-    const animatedStyle = {
-      opacity: opacityValue,
-      transform: [{ translateY: translateYValue }],
-    };
-    const animatedText = {
-      opacity: opacityText
-    };
-    const width = this.state.width.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['0%', '100%']
-    })
-    this.selectIt(0, ()=> void 0)
-    let cepage = []
-    this.props.cepage.map((c) => {
-      cepage.push((cepageValues.values[c]))
-    })
-    let favorite = this.props.favorite
-
-    return (
-
-      <Animated.View  style={animatedStyle}>
-      <TouchableOpacity
-        activeOpacity={1}
-        onPressIn={()=>this.selectIt(1,()=> void 0)}
-        onLongPress={() => {
-          this.props.manageItem(this.props.id)
-          this.selectIt(0,() => void 0)
-        }}
-        onPress={this._onPress}
-        >
-        <Animated.View style={{position:'absolute',zIndex:10,backgroundColor: 'lightgray', opacity: 0.2, height:"100%", width: width }}/>
-        <View style={{width:'100%',backgroundColor:'white',flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderColor:"lightgray",borderBottomWidth:1,padding:10}}>
-
-        <View style={{flexDirection:'row',alignItems:'center',flex:6}}>
-          <View style={{backgroundColor:(colors[this.props.color] ? colors[this.props.color].color : 'black' ),borderWidth:1,borderColor:'#bababa',borderRadius:15,width:30,height:30}}>
-          </View>
-
-          <View style={{paddingHorizontal:10,alignSelf:'baseline',flex:1,flexDirection:'column'}}>
-            <View style={{flexDirection:'row'}}>
-              <Text style={styles.title}>{this.props.appelation}</Text>
-                {favorite ?
-                    <View>
-                      <Image style={{
-                        resizeMode: 'contain',
-                        height:20
-                      }} source={heartFull} />
-                    </View>
-                : void 0}
-            </View>
-
-
-
-
-            <Text style={styles.domain}>{this.props.region || ''}</Text>
-            {this.props.annee ? <Text style={styles.domain}>{this.props.annee || ''}</Text> : void 0}
-            {this.props.domain && this.props.domain != '' ? <Text style={styles.domain}>{this.props.domain} </Text> : void 0}
-          </View>
-
-        </View>
-        <View style={{flex:1,alignItems:'flex-start'}}>
-          <Text style={{alignSelf:'baseline',flexWrap: "wrap",width:50,textAlign:'center'}}>{this.props.price ? this.props.price + '€':''}</Text>
-          <Text style={{alignSelf:'baseline',flexWrap: "wrap",width:50,textAlign:'center'}}>{this.props.stock +' bts'}</Text>
-        </View>
-
-        </View>
-
-      </TouchableOpacity>
-      </Animated.View>
-    );
-  }
+  return bindActionCreators({setWine,resetWine,resetResults,fetchSearch},dispatch)
 }
 
 class Wines extends React.Component {
   static navigationOptions = ({ navigation  }) => {
     return {
-    headerRight: null
+    headerRight: null,
+    headerTitle:'Vins trouvés'
     }
   }
   constructor(props){
     super(props)
-    this.state = {firstQuery:'',refreshing:true}
+    this.state = {refreshing:false}
     this._onPressItem = this._onPressItem.bind(this)
-    this.manageItem = this.manageItem.bind(this)
   }
-  _keyExtractor = (item, index) => item.id;
+  _keyExtractor = (item, index) => item.key;
 
   _onPressItem = (id: string) => {
     this.props.resetWine()
     this.props.setWine(this.props.wines[id])
     this.props.navigation.navigate('ficheWine')
-
-    // Actions.fiche({
-    //       id:id,
-    //       wine:this.props.wines[id],
-    //     });
-
-    // updater functions are preferred for transactional updates
   };
 
   _renderItem = ({item}) => (
-    <MyListItem
+    <WineItem
       onPressItem={this._onPressItem}
       manageItem={this.manageItem}
       {...item}
     />
   );
+  getResults(){
 
-  manageItem(id) {
-    // ActionSheetIOS.showActionSheetWithOptions({
-    //     options: ['Supprimer','Annuler'],
-    //     destructiveButtonIndex:0
-    //   }, (index) => {
-    //     if (index == 0 ){
-    //       firebase.database().ref('/wines/'+ this.props.user.uid + '/'+ this.props.wines[id].id).remove()
-    //     } else {
-    //       return
-    //     }
-    //
-    //     // Do something with result
-    //   })
+    this.props.fetchSearch(this.props.search).then(()=>{
+      this.setState({refreshing:false})
+    }).catch(e=>{
+      console.log(e)
+      this.setState({refreshing:false})
+    })
+  }
+  componentDidMount(){
+    this.getResults()
   }
   render(){
-    const { firstQuery } = this.state;
+
     if (!this.props.wines) return (
-      <View style={{justifyContent:'center',flex:1}}>
+      <View style={styles.root}>
 
         <ActivityIndicator />
-
       </View>)
     let wines = []
     Object.keys(this.props.wines).map((e,i)=>{
@@ -217,7 +75,7 @@ class Wines extends React.Component {
       if (!wine) return null
       wines.push({
         id:i.toString(),
-        key: wine.id,
+        key: wine._id,
         color:wine.color,
         stock:wine.stock,
         price:wine.price,
@@ -231,26 +89,21 @@ class Wines extends React.Component {
     })
 
     return(
-      <View style={{flex:1}}>
-
-        <View style={{
-flex:1,
-          backgroundColor: "transparent",
-          justifyContent: "center",
-          justifyContent:"flex-start",
-        }}>
-
+      <View style={styles.root}>
+        <View style={styles.container}>
         <FlatList
+          onRefresh={()=>{
+            this.setState({refreshing:true}) // trigger reload of notif
+            this.getResults()
+          }}
           refreshing={this.state.refreshing}
-
           data={wines}
           keyExtractor={this._keyExtractor}
           renderItem={this._renderItem}
           ListEmptyComponent={
-
-            <View style={{alignItems:'center',justifyContent:'center',flex:1,marginVertical:30,padding:10}}>
-              <Text style={{...styles.title,textAlign:'center',marginVertical:20}}>
-                Aucun Résultat !
+            <View style={styles.emptyView}>
+              <Text style={styles.title}>
+                Aucun Resultat
               </Text>
             </View>
 
@@ -265,66 +118,36 @@ flex:1,
 }
 export default connect(mapStateToProps,matchDispatchToProps)(Wines)
 const styles = StyleSheet.create({
+  root : {
+    justifyContent:'center',flex:1
+  },
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flex:1,
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    justifyContent:"flex-start",
+  },
 
+  emptyView : {
+    alignItems:'center',justifyContent:'center',flex:1,marginVertical:30,padding:10
   },
-  label:{
-    alignSelf:'center',
-    fontSize: 20,
-    textAlign: 'left',
-    marginRight:20,
+  buttonView : {
+    marginVertical:10,width:"80%",alignSelf:'center',justifyContent:'center',height:50,borderRadius:25,backgroundColor:'#9F041B'
   },
-  textInputPicker:{
-    color:'#262626',
-    padding:10,
-    paddingBottom:8,
-    fontSize:16,
-    justifyContent:'center',
-    alignSelf:'center',
-    alignItems:'center'
-  },
-  textInput:{
-    borderWidth:0,
-
-    borderColor:'transparent'
-  },
-  chip:{
-    margin:5,
+  buttonText:{
+    textAlign: "center",
+    padding: 10,
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16
   },
   title: {
     fontSize: 20,
-    fontWeight:"600",
+    fontFamily:"ProximaNova-Regular",
+    color:"#434343",
     alignSelf:'flex-start',
-    textAlign: 'left',
-    marginHorizontal: 5,
-  },
-  domain: {
-    fontSize: 18,
-
-    alignSelf:'flex-start',
-    textAlign: 'left',
-    marginHorizontal: 5,
-  },
-  appelation: {
-    color:"#262626",
-    fontWeight:"800",
-    fontSize: 24,
-    alignSelf:'flex-start',
-    textAlign: 'left',
-    margin: 10,
-  },
-  undertitle: {
-    fontSize: 16,
-    alignSelf:'flex-start',
-    textAlign: 'left',
-    marginHorizontal: 5,
-  },
-  instructions: {
     textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+    marginHorizontal: 5,
+    marginVertical:20
   },
 });

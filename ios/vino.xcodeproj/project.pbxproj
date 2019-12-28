@@ -16,7 +16,15 @@
 		0D1AA29422A2DAD40080998E /* libRNGestureHandler.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D1AA29122A2DACD0080998E /* libRNGestureHandler.a */; };
 		0D4DABA122A4337800F116C5 /* libRNGoogleSignin.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D4DABA022A4334D00F116C5 /* libRNGoogleSignin.a */; };
 		0D4DABA222A4339100F116C5 /* libRCTFBSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D4DAB7822A4332E00F116C5 /* libRCTFBSDK.a */; };
-		0DFAE24422B66A9C0049860E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0DFAE21822B66A9C0049860E /* GoogleService-Info.plist */; };
+		0DA4E46822F336650086BFC2 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0DA4E43A22F336530086BFC2 /* libBVLinearGradient.a */; };
+		0DF9A73E22F43277006EF68B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0DF9A73D22F43277006EF68B /* GoogleService-Info.plist */; };
+		0DF9A75722F48795006EF68B /* ProximaNovaT-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0DF9A75022F48794006EF68B /* ProximaNovaT-Thin.ttf */; };
+		0DF9A75822F48795006EF68B /* ProximaNova-Semibold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0DF9A75122F48794006EF68B /* ProximaNova-Semibold.ttf */; };
+		0DF9A75922F48795006EF68B /* ProximaNova-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0DF9A75222F48794006EF68B /* ProximaNova-Black.ttf */; };
+		0DF9A75A22F48795006EF68B /* ProximaNova-Extrabld.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0DF9A75322F48795006EF68B /* ProximaNova-Extrabld.ttf */; };
+		0DF9A75B22F48795006EF68B /* ProximaNova-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0DF9A75422F48795006EF68B /* ProximaNova-Light.ttf */; };
+		0DF9A75C22F48795006EF68B /* ProximaNova-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0DF9A75522F48795006EF68B /* ProximaNova-Regular.ttf */; };
+		0DF9A75D22F48795006EF68B /* ProximaNova-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0DF9A75622F48795006EF68B /* ProximaNova-Bold.ttf */; };
 		11D1A2F320CAFA9E000508D9 /* libRCTAnimation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5E9157331DD0AC6500FF2AA8 /* libRCTAnimation.a */; };
 		133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78C398B91ACF4ADC00677621 /* libRCTLinking.a */; };
 		139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139105C11AF99BAD00B5F7CC /* libRCTSettings.a */; };
@@ -153,6 +161,20 @@
 			proxyType = 2;
 			remoteGlobalIDString = 9FD355121D3E4A2900D06170;
 			remoteInfo = RNGoogleSignin;
+		};
+		0DA4E43922F336530086BFC2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0DA4E43422F336520086BFC2 /* BVLinearGradient.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 134814201AA4EA6300B7C361;
+			remoteInfo = BVLinearGradient;
+		};
+		0DA4E43B22F336530086BFC2 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0DA4E43422F336520086BFC2 /* BVLinearGradient.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 64AA15081EF7F30100718508;
+			remoteInfo = "BVLinearGradient-tvOS";
 		};
 		0DFAE20522B667C00049860E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -384,8 +406,16 @@
 		0D4DABDF22A4371700F116C5 /* libFBSDKCoreKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFBSDKCoreKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0D4DABE122A4371700F116C5 /* libFBSDKLoginKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFBSDKLoginKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0D4DABE322A4371700F116C5 /* libFBSDKShareKit.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFBSDKShareKit.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		0DA4E43422F336520086BFC2 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
 		0DD149B822A5BB9200388081 /* vino.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = vino.entitlements; path = vino/vino.entitlements; sourceTree = "<group>"; };
-		0DFAE21822B66A9C0049860E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Desktop/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		0DF9A73D22F43277006EF68B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		0DF9A75022F48794006EF68B /* ProximaNovaT-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNovaT-Thin.ttf"; sourceTree = "<group>"; };
+		0DF9A75122F48794006EF68B /* ProximaNova-Semibold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Semibold.ttf"; sourceTree = "<group>"; };
+		0DF9A75222F48794006EF68B /* ProximaNova-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Black.ttf"; sourceTree = "<group>"; };
+		0DF9A75322F48795006EF68B /* ProximaNova-Extrabld.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Extrabld.ttf"; sourceTree = "<group>"; };
+		0DF9A75422F48795006EF68B /* ProximaNova-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Light.ttf"; sourceTree = "<group>"; };
+		0DF9A75522F48795006EF68B /* ProximaNova-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Regular.ttf"; sourceTree = "<group>"; };
+		0DF9A75622F48795006EF68B /* ProximaNova-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Bold.ttf"; sourceTree = "<group>"; };
 		139105B61AF99BAD00B5F7CC /* RCTSettings.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTSettings.xcodeproj; path = "../node_modules/react-native/Libraries/Settings/RCTSettings.xcodeproj"; sourceTree = "<group>"; };
 		139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTWebSocket.xcodeproj; path = "../node_modules/react-native/Libraries/WebSocket/RCTWebSocket.xcodeproj"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* vino.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = vino.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -424,6 +454,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0DA4E46822F336650086BFC2 /* libBVLinearGradient.a in Frameworks */,
 				0D4DABA222A4339100F116C5 /* libRCTFBSDK.a in Frameworks */,
 				0D4DABA122A4337800F116C5 /* libRNGoogleSignin.a in Frameworks */,
 				0D1AA29422A2DAD40080998E /* libRNGestureHandler.a in Frameworks */,
@@ -573,6 +604,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		0DA4E43522F336520086BFC2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0DA4E43A22F336530086BFC2 /* libBVLinearGradient.a */,
+				0DA4E43C22F336530086BFC2 /* libBVLinearGradient.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		0DFAE1D722B667B70049860E /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
@@ -612,7 +652,7 @@
 		13B07FAE1A68108700A75B9A /* vino */ = {
 			isa = PBXGroup;
 			children = (
-				0DFAE21822B66A9C0049860E /* GoogleService-Info.plist */,
+				0DF9A73D22F43277006EF68B /* GoogleService-Info.plist */,
 				0DD149B822A5BB9200388081 /* vino.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -683,6 +723,7 @@
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				0DA4E43422F336520086BFC2 /* BVLinearGradient.xcodeproj */,
 				0D0932FF22ABE8E3009E9FAF /* RNImagePicker.xcodeproj */,
 				0D4DAB9B22A4334D00F116C5 /* RNGoogleSignin.xcodeproj */,
 				0D4DAB6E22A4332A00F116C5 /* RCTFBSDK.xcodeproj */,
@@ -716,6 +757,13 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				0DF9A75222F48794006EF68B /* ProximaNova-Black.ttf */,
+				0DF9A75622F48795006EF68B /* ProximaNova-Bold.ttf */,
+				0DF9A75322F48795006EF68B /* ProximaNova-Extrabld.ttf */,
+				0DF9A75422F48795006EF68B /* ProximaNova-Light.ttf */,
+				0DF9A75522F48795006EF68B /* ProximaNova-Regular.ttf */,
+				0DF9A75122F48794006EF68B /* ProximaNova-Semibold.ttf */,
+				0DF9A75022F48794006EF68B /* ProximaNovaT-Thin.ttf */,
 				13B07FAE1A68108700A75B9A /* vino */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* vinoTests */,
@@ -871,6 +919,10 @@
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
+				{
+					ProductGroup = 0DA4E43522F336520086BFC2 /* Products */;
+					ProjectRef = 0DA4E43422F336520086BFC2 /* BVLinearGradient.xcodeproj */;
+				},
 				{
 					ProductGroup = 00C302A81ABCB8CE00DB3ED1 /* Products */;
 					ProjectRef = 00C302A71ABCB8CE00DB3ED1 /* RCTActionSheet.xcodeproj */;
@@ -1047,6 +1099,20 @@
 			fileType = archive.ar;
 			path = libRNGoogleSignin.a;
 			remoteRef = 0D4DAB9F22A4334D00F116C5 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0DA4E43A22F336530086BFC2 /* libBVLinearGradient.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libBVLinearGradient.a;
+			remoteRef = 0DA4E43922F336530086BFC2 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		0DA4E43C22F336530086BFC2 /* libBVLinearGradient.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libBVLinearGradient.a;
+			remoteRef = 0DA4E43B22F336530086BFC2 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		0DFAE20622B667C00049860E /* libRNMlKit.a */ = {
@@ -1266,9 +1332,16 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0DF9A75722F48795006EF68B /* ProximaNovaT-Thin.ttf in Resources */,
+				0DF9A75822F48795006EF68B /* ProximaNova-Semibold.ttf in Resources */,
+				0DF9A75922F48795006EF68B /* ProximaNova-Black.ttf in Resources */,
+				0DF9A75A22F48795006EF68B /* ProximaNova-Extrabld.ttf in Resources */,
+				0DF9A75B22F48795006EF68B /* ProximaNova-Light.ttf in Resources */,
+				0DF9A75C22F48795006EF68B /* ProximaNova-Regular.ttf in Resources */,
+				0DF9A75D22F48795006EF68B /* ProximaNova-Bold.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-				0DFAE24422B66A9C0049860E /* GoogleService-Info.plist in Resources */,
+				0DF9A73E22F43277006EF68B /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1511,7 +1584,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.mkm.vino;
+				PRODUCT_BUNDLE_IDENTIFIER = org.mkm.vinologi;
 				PRODUCT_NAME = vino;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1541,7 +1614,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.mkm.vino;
+				PRODUCT_BUNDLE_IDENTIFIER = org.mkm.vinologi;
 				PRODUCT_NAME = vino;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

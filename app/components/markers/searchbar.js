@@ -40,7 +40,7 @@ export default class SearchBar extends React.Component {
           underlineColorAndroid='transparent'
           autoCorrect = {false}
           value={this.props.value}
-          style={{paddingHorizontal:10,fontSize:18,flex:1}}
+          style={{paddingHorizontal:10,fontSize:18,flex:1,fontFamily:"ProximaNova-Regular"}}
           />
         {(this.props.value|| '').length > 0 ?
           <TouchableOpacity

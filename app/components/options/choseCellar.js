@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
-import {FlatList,Button,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
-import Checkbox from '../markers/checkbox.js';
+import {FlatList,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
+import Checkbox from '../markers/checkbox2.js';
+import Button from '../markers/button.js';
 import {SafeAreaView} from 'react-navigation'
 import Icon from '../markers/icon.js';
 import SearchBar from '../markers/searchbar.js';
 import {pastillesValues} from '../array/description'
 import {bindActionCreators} from 'redux'
-import {resetResults} from '../../redux/actions'
+import {resetResults,resetWines} from '../../redux/actions'
 import {moveWines,fetchWines} from '../../functions/api'
 import {connect} from 'react-redux'
 function mapStateToProps(state,props){
@@ -18,7 +19,7 @@ function mapStateToProps(state,props){
   }
 }
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({moveWines,fetchWines,resetResults}, dispatch)
+  return bindActionCreators({moveWines,fetchWines,resetResults,resetWines}, dispatch)
 }
 class MyListItem extends React.PureComponent {
   _onPress = () => {
@@ -53,14 +54,22 @@ class ChoseCellar extends React.PureComponent {
 
   _keyExtractor = (item, index) => item._id;
 
-  _onPressItem = (id: string) => {
+  _onPressItem = async (id: string) => {
 
     Keyboard.dismiss()
     let all = this.props.navigation.getParam('all') || false
-    this.props.moveWines(all,this.props.wines,this.props.cellarId,id)
-    this.props.navigation.navigate('wines')
-    this.props.resetResults()
-    this.props.fetchWines('',{cellarId:this.props.cellarId,keyOrder:this.props.search.keyOrder || 'region',order:(this.props.search.order || 1), limit:this.state.limit+10})
+    try {
+      await this.props.moveWines(all,this.props.wines,this.props.cellarId,id)
+      this.props.resetResults()
+      this.props.resetWines()
+      await this.props.fetchWines('',{cellarId:this.props.cellarId,keyOrder:this.props.search.keyOrder || 'region',order:(this.props.search.order || 1), limit:this.state.limit+10})
+      this.props.navigation.navigate('wines')
+    } catch(error){
+      console.log(error)
+      this.props.navigation.navigate('wines')
+    }
+
+
   };
 
   _renderItem = ({item}) => (
@@ -76,7 +85,7 @@ class ChoseCellar extends React.PureComponent {
       let data = this.props.cellars
     return (
 
-      <SafeAreaView style={{flex:1}}>
+      <SafeAreaView style={{flex:1,backgroundColor:'white'}}>
       <Text
         style={{
           color:"#262626",
@@ -92,9 +101,22 @@ class ChoseCellar extends React.PureComponent {
               renderItem={this._renderItem}
             />
             <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Fermer"
-          />
+                style={{
+                  color:'red',
+                  margin:10,
+                  marginHorizontal:20,
+                  height:40,
+                  backgroundColor: "#D72032", borderRadius: 20
+                }}
+                buttonStyle={{
+                  fontSize:14,
+                  color:'white',
+                  backgroundColor:'transparent',
+                  padding:0
+                }}
+              onPress={() => this.props.navigation.goBack()}
+              content="Fermer"
+            />
         </SafeAreaView>
     );
   }

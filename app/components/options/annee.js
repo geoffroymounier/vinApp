@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {FlatList,Button,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
-import Checkbox from '../markers/checkbox.js';
+import {FlatList,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
+import Checkbox from '../markers/checkbox2.js';
+import Button from '../markers/button.js';
 import {SafeAreaView} from 'react-navigation'
 import Icon from '../markers/icon.js';
 import {makeYearArray} from '../array/pickers'
@@ -10,10 +11,9 @@ import {connect} from 'react-redux'
 function mapStateToProps(state,props){
   let key = props.navigation.getParam('keyValue')
   return{
-    selected : state.wine[key],
-    annee : state.wine.annee,
+    selected : state[props.navigation.getParam('search') == true ? 'search' : 'wine'][key],
     search : props.navigation.getParam('search') == true,
-    apogee : state.wine.apogee
+    apogee : state[props.navigation.getParam('search') == true ? 'search' : 'wine'].apogee
   }
 }
 function matchDispatchToProps(dispatch){
@@ -85,7 +85,7 @@ class Annee extends React.PureComponent {
 
     return (
 
-      <SafeAreaView style={{flex:1}}>
+      <View style={{flex:1,backgroundColor:'white',paddingTop:30,}}>
 
             <FlatList
               data={data}
@@ -94,10 +94,23 @@ class Annee extends React.PureComponent {
               renderItem={this._renderItem}
             />
             <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Fermer"
-          />
-        </SafeAreaView>
+                style={{
+                  color:'red',
+                  margin:10,
+                  marginHorizontal:20,
+                  height:40,
+                  backgroundColor: "#D72032", borderRadius: 20
+                }}
+                buttonStyle={{
+                  fontSize:14,
+                  color:'white',
+                  backgroundColor:'transparent',
+                  padding:0
+                }}
+              onPress={() => this.props.navigation.goBack()}
+              content="Fermer"
+            />
+      </View>
     );
   }
 }

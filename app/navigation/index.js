@@ -3,7 +3,11 @@ import React from 'react'
 import {View,ScrollView,TouchableOpacity, Text,Button,Image,Modal } from 'react-native'
 import {DrawerItems, SafeAreaView, createStackNavigator, createDrawerNavigator , createAppContainer , createSwitchNavigator, createBottomTabNavigator} from 'react-navigation'
 import Login from '../views/login'
+import SignIn from '../views/signin'
+import SignUp from '../views/signup'
+import ResetPass from '../views/resetPass'
 import AuthLoading from '../views/authLoading'
+import LinearGradient from 'react-native-linear-gradient';
 import DrawerContentComponents from '../components/navigation/drawer'
 // import Filter from '../views/filter'
 import Cellars from '../views/cellars'
@@ -27,11 +31,21 @@ import Filter from '../views/filter'
 const defaultNavigationOptions = ({ navigation  }) => {
 
   return {
-  headerRight: (
-    <TouchableOpacity onPress={() => navigation.openDrawer()} >
-      <Image style={{resizeMode: 'contain',height:20}} source={require('../assets/menu.png')} />
-    </TouchableOpacity>
-    )
+    headerRight:(
+      <TouchableOpacity onPress={() => navigation.openDrawer()} >
+        <Image style={{resizeMode: 'contain',height:20,tintColor:'white'}} source={require('../assets/menu.png')} />
+      </TouchableOpacity>
+    ),
+    headerBackTitle:null,
+    headerBackground: (
+      <LinearGradient
+        start={{x: 0, y: 0}}
+        style={{flex:1}}
+        end={{x: 1, y: 0}} colors={[ '#9F041B','#E02535']}
+      />
+    ),
+    headerStyle:{height:60},
+    headerTintColor:'white'
   }
 };
 const filterStack = createStackNavigator({
@@ -56,7 +70,7 @@ const TabStackWine = createDrawerNavigator({
   _main : createStackNavigator({
     _cellar : createStackNavigator({
       cellars:  Cellars,
-      editCellar: EditCellar,
+      // editCellar: EditCellar,
       wines : Wines,
       editWine: EditWine,
       ficheWine: EditWine,
@@ -64,10 +78,9 @@ const TabStackWine = createDrawerNavigator({
       results : Results,
       login : Login
     },{
-
       defaultNavigationOptions,
-
     }),
+    editCellar: EditCellar,
     region : Region,
     country:Country,
     appelation:Appelation,
@@ -78,9 +91,19 @@ const TabStackWine = createDrawerNavigator({
     pastilles:Pastilles,
     choseCellar:ChoseCellar
   },{
-    mode : 'modal',
-    headerMode:'none',
-    defaultNavigationOptions
+    headerMode: 'none',
+    mode: 'modal',
+    transparentCard: true,
+    navigationOptions: {
+      header : null,
+      gesturesEnabled: false
+    },
+    cardStyle: {
+      // makes transparentCard work for android
+      opacity: 1.0,
+      backgroundColor:'rgba(200,200,200,0.4)'
+    },
+    // defaultNavigationOptions
   }),
   filter : filterStack,
   login : filterStack
@@ -89,10 +112,25 @@ const TabStackWine = createDrawerNavigator({
 },{
   contentComponent:DrawerContentComponents,
   drawerPosition:'right',
-  drawerType:'slide'
+  drawerType:'front'
 });
 const LoginStack = createStackNavigator({
-      login:  Login
+      login:  Login,
+      signIn : SignIn,
+      signUp : SignUp,
+      resetPass: ResetPass
+},{
+  defaultNavigationOptions: {
+    headerBackground: (
+      <LinearGradient
+        start={{x: 0, y: 0}}
+        style={{flex:1}}
+        end={{x: 1, y: 0}} colors={[ '#9F041B','#E02535']}
+      />
+    ),
+        headerBackTitle:null,
+        headerTintColor: '#fff',
+  },
 });
 const AuthLoadingStack = createStackNavigator({
       home:  AuthLoading

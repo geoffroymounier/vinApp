@@ -54,9 +54,9 @@ const pastillesValues = ["Apéro",
 const terrains = ["Marnes","Argiles"]
 const typologie = ["Vin Tranquille","Effervescent","Vin Moelleux/Liquoreux","Vin Doux Naturel"]
 const colors = {
-  red : {label:"Rouge",color:"#530000"},
-  white : {label:"Blanc",color:"#ffffb3"},
-  rose : {label:"Rosé",color:"#f5dde2"},
+  red : {label:"Rouge",color:"#E82D49"},
+  white : {label:"Blanc",color:"#FFC401"},
+  rose : {label:"Rosé",color:"#F89BA4"},
 }
 
 const cepageValues = {
@@ -82,6 +82,7 @@ const accordsValues = {
   aperitif:{
     icon: require("../../assets/aperitif.png"),
     color:'#353536',
+    label:"Apéritif",
     values: [
       "Charcuterie",
       "Chèvre Frais",
@@ -98,6 +99,7 @@ const accordsValues = {
   },
   legumes:{
     icon: require("../../assets/legume.png"),
+    label:"Légumes",
     color:'#006600',
     values: [
       "Asperges",
@@ -121,6 +123,7 @@ const accordsValues = {
   },
   viandes:{
     icon: require("../../assets/viande.png"),
+    label:"Viandes",
     color:'#660018',
     values: [
       "Tartare",
@@ -142,6 +145,7 @@ const accordsValues = {
   },
   poissons:{
     icon: require("../../assets/poisson.png"),
+    label:"Poissons",
     color:'#001a66',
     values: [
       "Poisson Grillé",
@@ -160,6 +164,7 @@ const accordsValues = {
   },
   fromages:{
     icon: require("../../assets/fromage.png"),
+    label:"Fromages",
     color:'#feb120',
     values: [
       "Abondance",
@@ -191,6 +196,7 @@ const accordsValues = {
   desserts:{
     icon: require("../../assets/dessert.png"),
     color:'#ff66d9',
+    label:"Dessert",
     values: [
       "Chocolat",
       "Citron",
@@ -203,6 +209,7 @@ const accordsValues = {
   cuisine_monde:{
     icon: require("../../assets/cuisine_monde.png"),
     color:'#994d00',
+    label:"Cuisine du monde",
     values: [
       "Asiatique",
       "Sushis",
@@ -213,20 +220,221 @@ const accordsValues = {
 }
 const json = {
   vue : {
-    placeholder:"Oeil :",
+    label:"Vue",
     icon: require("../../assets/eye.png"),
-    values: ["Long en bouche","Fruité","Epicé","Floral","Grillé","Long en bouche","Fruité","Epicé","Floral","Grillé","Long en bouche","Fruité","Epicé","Floral","Grillé","Long en bouche","Fruité","Epicé","Floral","Grillé"]
+    values: {
+      red:[
+        "Limpide",
+        "Trouble",
+        "Brillant",
+        "Pâle",
+        "Intense",
+        "Ambré",
+        "Larmes",
+        "Bulles",
+        "Rubis",
+        "Pourpre",
+        "Grenat",
+        "Acajou"
+      ],
+      rose:[
+        "Limpide",
+        "Trouble",
+        "Brillant",
+        "Pâle",
+        "Intense",
+        "Ambré",
+        "Rosé",
+        "Orangé",
+        "Larmes",
+        "Bulles",
+      ],
+      white:[
+        "Paille",
+        "Jaune Citron",
+        "Jaune Or",
+        "Limpide",
+        "Trouble",
+        "Brillant",
+        "Pâle",
+        "Intense",
+        "Larmes",
+        "Bulles"
+      ]
+    }
   },
   nez : {
-    placeholder:"Nez :",
+    label:"Nez",
     icon: require("../../assets/nose.png"),
-    values: ["Long en bouche","Fruité","Epicé","Floral","Grillé","Long en bouche","Fruité","Epicé","Floral","Grillé","Long en bouche","Fruité","Epicé","Floral","Grillé","Long en bouche","Fruité","Epicé","Floral","Grillé"]
+    values: {
+      red:[
+        "Groseille",
+        "Cerise",
+        "Fraise",
+        "Framboise",
+        "Cassis",
+        "Myrtille",
+        "Mûre",
+        "Cerise Noire",
+        "Prune",
+        "Noix",
+        "Amande",
+        "Rose",
+        "Violette",
+        "Pivoine",
+        "Bourgeon de Cassis",
+        "Champignon",
+        "Truffe",
+        "Cannelle",
+        "Vanille",
+        "Poivre",
+        "Chêne",
+        "Eucalyptus",
+        "Cuir",
+        "Chocolat Noir",
+        "Café",
+        "Caramel",
+        "Note Fumée",
+      ],
+      rose:[
+        "Groseille",
+        "Cerise",
+        "Fraise",
+        "Framboise",
+        "Pamplemousse",
+        "Pomme",
+        "Amande",
+        "Rose",
+        "Violette",
+        "Fleurs séchées",
+        "Poivron Vert",
+        "Poivre"
+      ],
+        white:[
+          "Citron",
+          "Pamplemousse",
+          "Orange",
+          "Ananas",
+          "Litchi",
+          "Melon",
+          "Muscat",
+          "Pomme",
+          "Poire",
+          "Abricot",
+          "Pêche",
+          "Amande",
+          "Noix",
+          "Aubépine",
+          "Acacia",
+          "Tilleul",
+          "Miel",
+          "Rose",
+          "Violette",
+          "Fleur d'oranger",
+          "Champignon",
+          "Herbe Fraîche",
+          "Fougère",
+          "Anis",
+          "Vanille",
+          "Cannelle",
+          "Clou de Girofle",
+          "Safran",
+          "Beurre",
+          "Pain Grillé",
+          "Amande Grillée",
+          "Noisette",
+          "Café",
+          "Caramel",
+          "Note Fumée",
+      ]
+    }
   },
 
   bouche : {
-    placeholder:"Bouche :",
+    label:"Bouche",
     icon: require("../../assets/mouth.png"),
-    values: ["Long en bouche","Fruité","Epicé","Floral","Grillé","Long en bouche","Fruité","Epicé","Floral","Grillé","Long en bouche","Fruité","Epicé","Floral","Grillé","Long en bouche","Fruité","Epicé","Floral","Grillé"]
+    values: {
+      red:[
+        "Groseille",
+        "Cerise",
+        "Fraise",
+        "Framboise",
+        "Cassis",
+        "Myrtille",
+        "Mûre",
+        "Cerise Noire",
+        "Prune",
+        "Noix",
+        "Amande",
+        "Rose",
+        "Violette",
+        "Pivoine",
+        "Bourgeon de Cassis",
+        "Champignon",
+        "Truffe",
+        "Cannelle",
+        "Vanille",
+        "Poivre",
+        "Chêne",
+        "Eucalyptus",
+        "Cuir",
+        "Chocolat Noir",
+        "Café",
+        "Caramel",
+        "Note Fumée",
+      ],
+      rose:[
+        "Groseille",
+        "Cerise",
+        "Fraise",
+        "Framboise",
+        "Pamplemousse",
+        "Pomme",
+        "Amande",
+        "Rose",
+        "Violette",
+        "Fleurs séchées",
+        "Poivron Vert",
+        "Poivre"
+      ],
+        white:[
+          "Citron",
+          "Pamplemousse",
+          "Orange",
+          "Ananas",
+          "Litchi",
+          "Melon",
+          "Muscat",
+          "Pomme",
+          "Poire",
+          "Abricot",
+          "Pêche",
+          "Amande",
+          "Noix",
+          "Aubépine",
+          "Acacia",
+          "Tilleul",
+          "Miel",
+          "Rose",
+          "Violette",
+          "Fleur d'oranger",
+          "Champignon",
+          "Herbe Fraîche",
+          "Fougère",
+          "Anis",
+          "Vanille",
+          "Cannelle",
+          "Clou de Girofle",
+          "Safran",
+          "Beurre",
+          "Pain Grillé",
+          "Amande Grillée",
+          "Noisette",
+          "Café",
+          "Caramel",
+          "Note Fumée",
+      ]
+    }
   },
 
 }

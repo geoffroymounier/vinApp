@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {FlatList,Button,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
-import Checkbox from '../markers/checkbox.js';
+import {FlatList,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
+import Checkbox from '../markers/checkbox2.js';
+import Button from '../markers/button.js';
 import {SafeAreaView} from 'react-navigation'
 import Icon from '../markers/icon.js';
 import SearchBar from '../markers/searchbar.js';
@@ -14,7 +15,7 @@ function mapStateToProps(state,props){
 
   return{
     pastilles : pastilles || [],
-    selected : state.wine['pastilles'] || []
+    selected : state[props.navigation.getParam('search') == true ? 'search' : 'wine']['pastilles'] || []
   }
 }
 function matchDispatchToProps(dispatch){
@@ -80,7 +81,7 @@ class Country extends React.PureComponent {
 
     return (
 
-      <SafeAreaView style={{flex:1}}>
+      <View style={{flex:1,backgroundColor:'white',paddingTop:30,}}>
             <FlatList
               data={data}
               keyboardShouldPersistTaps={'always'}
@@ -88,10 +89,23 @@ class Country extends React.PureComponent {
               renderItem={this._renderItem}
             />
             <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Fermer"
-          />
-        </SafeAreaView>
+                style={{
+                  color:'red',
+                  margin:10,
+                  marginHorizontal:20,
+                  height:40,
+                  backgroundColor: "#D72032", borderRadius: 20
+                }}
+                buttonStyle={{
+                  fontSize:14,
+                  color:'white',
+                  backgroundColor:'transparent',
+                  padding:0
+                }}
+              onPress={() => this.props.navigation.goBack()}
+              content="Fermer"
+            />
+      </View>
     );
   }
 }

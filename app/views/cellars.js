@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-// import {Actions} from 'react-native-router-flux'
+import CellarItem from '../components/list/cellarItem'
 import {Animated,Button,Dimensions,ActivityIndicator,InteractionManager,Easing,Platform,ActionSheetIOS,Alert,FlatList,TouchableHighlight,StyleSheet, Text, View,Image,ScrollView,KeyboardAvoidingView,TextInput,Picker,TouchableOpacity} from 'react-native';
 // import Icon from 'react-native-vector-icons/FontAwesome5';
 // import {Chip} from 'react-native-paper';
 // import RNPickerSelect from 'react-native-picker-select';
 // import ManagePhoto from '../components/modals/managePhoto'
 // import firebase from 'react-native-firebase';
+import bottle from '../assets/bottle.png'
 import messages from '../components/texts/'
 import ButtonCustom  from '../components/markers/button'
 import Checkbox from '../components/markers/checkbox';
@@ -15,7 +16,7 @@ import Checkbox from '../components/markers/checkbox';
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import {fetchCellars,deleteCellar} from '../functions/api'
-import {setCellar,resetCellar} from '../redux/actions'
+import {setCellar,resetCellar,resetSearch} from '../redux/actions'
 
 const { height, width } = Dimensions.get('window');
 
@@ -24,139 +25,10 @@ function mapStateToProps(state,props){
     cellars : state.cellars,
     activeSelection : props.navigation.getParam('activeSelection') == true,
     showPicker : props.navigation.getParam('showPicker') == true
-
-    // user : state.profile.user,
-    // message : state.profile.message,
-    // isSearching:state.profile.isSearching || Object.keys(state.profile.querycelar || {}).length > 0
   }
 }
 function matchDispatchToProps(dispatch){
-  return bindActionCreators({deleteCellar,fetchCellars,setCellar,resetCellar},dispatch)
-}
-
-
-class MyListItem extends React.Component {
-  constructor(props){
-    super(props)
-    this.state = {
-      width: new Animated.Value(0),
-      opacityValue: new Animated.Value(0),
-      opacityText: new Animated.Value(0),
-      translateYValue: new Animated.Value(-0.1*height),
-    };
-  }
-  componentWillMount(){
-    this.start()
-  }
-  _onPress = () => {
-
-    this.selectIt(1,()=>{
-      this.selectIt(0,()=> void 0)
-      // this.props.onPressItem(this.props.id)
-      this.props.activeSelection ? this.props.toggleSelect(this.props._id) : this.props.onPressItem(this.props.id)
-      this.selectIt(0,()=> void 0)
-    })
-  };
-
-  selectIt(value,callback){
-    Animated.timing(this.state.width,{
-      toValue: value,
-      duration: 150,
-      easing : Easing.linear
-    }).start(()=>callback())
-  }
-  start(){
-    Animated.parallel([
-      Animated.timing(this.state.opacityValue, {
-        toValue: 1, // Animate to final value of 1
-        duration:150,
-        useNativeDriver:true,
-        delay:300
-      }),
-      Animated.timing(this.state.opacityText, {
-        toValue: 1, // Animate to final value of 1
-        duration:150,
-        useNativeDriver:true,
-        delay:0
-      }),
-      Animated.timing(this.state.translateYValue, {
-        toValue: 0,
-        duration:200,
-        useNativeDriver:true,
-        delay:300
-      }),
-    ]).start();
-  }
-  render() {
-    const { opacityValue, translateYValue , opacityText } = this.state;
-    const animatedStyle = {
-      opacity: opacityValue,
-      transform: [{ translateY: translateYValue }],
-    };
-    const animatedText = {
-      opacity: opacityText
-    };
-    const width = this.state.width.interpolate({
-      inputRange: [0, 1],
-      outputRange: ['0%', '100%']
-    })
-    this.selectIt(0, ()=> void 0)
-    let favorite = this.props.favorite
-
-    return (
-
-      <Animated.View  style={animatedStyle}>
-      <TouchableOpacity
-        activeOpacity={1}
-        onPressIn={()=>this.selectIt(1,()=> void 0)}
-        onLongPress={() => {
-          this.props.manageItem(this.props.id)
-          this.selectIt(0,() => void 0)
-        }}
-        onPress={this._onPress}
-        >
-        <Animated.View style={{position:'absolute',zIndex:10,backgroundColor: 'lightgray', opacity: 0.2, height:"100%", width: width }}/>
-        <View style={{width:'100%',backgroundColor:'white',flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderColor:"lightgray",borderBottomWidth:1,padding:10}}>
-
-        <View style={{flexDirection:'row',alignItems:'center',flex:6}}>
-
-
-          <View style={{paddingHorizontal:10,alignSelf:'baseline',flex:1,flexDirection:'column'}}>
-            <View style={{flexDirection:'row'}}>
-              <Text style={styles.title}>{this.props.name}</Text>
-              {favorite ?
-                  <View style={{marginLeft:10,alignSelf:'center'}}>
-                    <Icon name={'heart'}
-                    regular={favorite!=true}
-                    color={favorite ? 'pink' : 'darkgray'}
-                    solid={favorite==true}
-                    size={20}
-                  />
-                  </View>
-
-              : void 0}
-            </View>
-            <Text style={styles.domain}>{this.props.description} </Text>
-          </View>
-
-        </View>
-        {this.props.activeSelection ?
-          <Checkbox
-           onPress={this._onPress}
-           checked={this.props.selected}
-         />
-        :
-        <View style={{flex:1,alignItems:'flex-start'}}>
-          <Text style={{alignSelf:'baseline',flexWrap: "wrap",width:50,textAlign:'center'}}>{this.props.stock +' bts'}</Text>
-        </View>
-        }
-
-        </View>
-
-      </TouchableOpacity>
-      </Animated.View>
-    );
-  }
+  return bindActionCreators({deleteCellar,fetchCellars,setCellar,resetCellar,resetSearch},dispatch)
 }
 
 class Cellars extends React.Component {
@@ -165,11 +37,13 @@ class Cellars extends React.Component {
     if (params.activeSelection) return {
     headerLeft:
     (<Button
+      color='white'
       onPress={() => navigation.setParams({activeSelection:false})}
       title={"Annuler"}
     />),
     headerRight: params.selected > 0 ?
     (<Button
+      color='white'
       onPress={() => navigation.setParams({showPicker:true})}
       title={"Options"}
     />) : void 0
@@ -179,28 +53,27 @@ class Cellars extends React.Component {
     super(props)
     this.state = {firstQuery:'',refreshing:true,selected:[]}
     this._onPressItem = this._onPressItem.bind(this)
-    this.manageItem = this.manageItem.bind(this)
   }
   _keyExtractor = (item, index) => item.key;
 
   _onPressItem = (id: string) => {
     this.props.setCellar(this.props.cellars[id])
     this.props.navigation.navigate('wines',{cellarName:this.props.cellars[id].name})
-    // Actions.fiche({
-    //       id:id,
-    //       celar:this.props.[id],
-    //     });
-
-    // updater functions are preferred for transactional updates
   };
 
   componentDidMount(){
     this.props.fetchCellars().then(()=>this.setState({refreshing:false}))
+    this.props.navigation.addListener('didFocus',
+      payload => {
+        console.debug('didFocus', payload);
+        this.props.resetSearch()
+      }
+    );
+
   }
   _renderItem = ({item}) => (
-    <MyListItem
+    <CellarItem
       onPressItem={this._onPressItem}
-      manageItem={this.manageItem}
       {...item}
       toggleSelect = {(id)=>{
         let selected = [...this.state.selected]
@@ -214,28 +87,13 @@ class Cellars extends React.Component {
     />
   );
 
-  manageItem(id) {
-    // ActionSheetIOS.showActionSheetWithOptions({
-    //     options: ['Supprimer','Annuler'],
-    //     destructiveButtonIndex:0
-    //   }, (index) => {
-    //     if (index == 0 ){
-    //       firebase.database().ref('//'+ this.props.user.uid + '/'+ this.props.[id].id).remove()
-    //     } else {
-    //       return
-    //     }
-    //
-    //     // Do something with result
-    //   })
-  }
   render(){
     const { firstQuery } = this.state;
     if (!this.props.cellars) return (
-      <View style={{justifyContent:'center',flex:1}}>
-
+      <View style={styles.root}>
         <ActivityIndicator />
-
-      </View>)
+      </View>
+    )
     let cellars = []
     Object.keys(this.props.cellars).map((e,i)=>{
       let celar = this.props.cellars[e]
@@ -243,7 +101,7 @@ class Cellars extends React.Component {
       cellars.push({
         id:i.toString(),
         _id: celar._id,
-        key: celar.id,
+        key: celar._id,
         stock:celar.stock,
         name:celar.name,
         description:celar.description
@@ -251,14 +109,8 @@ class Cellars extends React.Component {
     })
 
     return(
-      <View style={{flex:1}}>
-
-        <View style={{
-            flex:1,
-          backgroundColor: "transparent",
-          justifyContent: "center",
-          justifyContent:"flex-start",
-        }}>
+      <View style={styles.root}>
+        <View style={styles.container}>
         {this.props.showPicker == true ?
           ActionSheetIOS.showActionSheetWithOptions(
           {
@@ -289,96 +141,62 @@ class Cellars extends React.Component {
           renderItem={this._renderItem}
           ListEmptyComponent={
             this.props.isSearching == true ? void 0 :
-            <View style={{alignItems:'center',justifyContent:'center',flex:1,marginVertical:30,padding:10}}>
-              <Text style={{...styles.title,textAlign:'center',marginVertical:20}}>
+            <View style={styles.emptyView}>
+              <Text style={styles.title}>
                 {messages.emptyCave}
               </Text>
-            <TouchableOpacity style={{width:'100%',justifyContent:'center',height:50,borderRadius:25,backgroundColor:'#530000'}} onPress={()=>this.props.navigation.navigate('editCellar')} >
-                <Text
-                    style={{
-                    textAlign: "center",
-                    padding: 10,
-                    color: "white",
-                    fontWeight: "bold",
-                    fontSize: 16
-                }}>Ajouter une nouvelle Cave !</Text>
-              </TouchableOpacity>
             </View>
 
           }
         />
 
         </View>
-        <ButtonCustom content='Ajouter une Cave' onPress={()=>{
+        <TouchableOpacity
+          style={styles.buttonView}
+          onPress={()=>{
             this.props.resetCellar()
-            this.props.navigation.navigate('editCellar')
-          }} />
+            this.props.navigation.push('editCellar')
+          }}
+          >
+            <Text
+                style={styles.buttonText}>Ajouter une nouvelle Cave !</Text>
+          </TouchableOpacity>
   </View>
     )
   }
 }
 export default connect(mapStateToProps,matchDispatchToProps)(Cellars)
 const styles = StyleSheet.create({
+  root : {
+    justifyContent:'center',flex:1
+  },
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    flex:1,
+    backgroundColor: "transparent",
+    justifyContent: "center",
+    justifyContent:"flex-start",
+  },
 
+  emptyView : {
+    alignItems:'center',justifyContent:'center',flex:1,marginVertical:30,padding:10
   },
-  label:{
-    alignSelf:'center',
-    fontSize: 20,
-    textAlign: 'left',
-    marginRight:20,
+  buttonView : {
+    marginVertical:10,width:"80%",alignSelf:'center',justifyContent:'center',height:50,borderRadius:25,backgroundColor:'#9F041B'
   },
-  textInputPicker:{
-    color:'#262626',
-    padding:10,
-    paddingBottom:8,
-    fontSize:16,
-    justifyContent:'center',
-    alignSelf:'center',
-    alignItems:'center'
-  },
-  textInput:{
-    borderWidth:0,
-
-    borderColor:'transparent'
-  },
-  chip:{
-    margin:5,
+  buttonText:{
+    textAlign: "center",
+    padding: 10,
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16
   },
   title: {
     fontSize: 20,
-    fontWeight:"600",
+    fontFamily:"ProximaNova-Regular",
+    color:"#434343",
     alignSelf:'flex-start',
-    textAlign: 'left',
-    marginHorizontal: 5,
-  },
-  domain: {
-    fontSize: 18,
-
-    alignSelf:'flex-start',
-    textAlign: 'left',
-    marginHorizontal: 5,
-  },
-  appelation: {
-    color:"#262626",
-    fontWeight:"800",
-    fontSize: 24,
-    alignSelf:'flex-start',
-    textAlign: 'left',
-    margin: 10,
-  },
-  undertitle: {
-    fontSize: 16,
-    alignSelf:'flex-start',
-    textAlign: 'left',
-    marginHorizontal: 5,
-  },
-  instructions: {
     textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+    marginHorizontal: 5,
+    marginVertical:20
   },
 });

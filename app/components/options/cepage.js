@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
-import {FlatList,Button,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
-import Checkbox from '../markers/checkbox.js';
+import {FlatList,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
+import Checkbox from '../markers/checkbox2.js';
+import Button from '../markers/button.js';
 import {SafeAreaView} from 'react-navigation'
 import Icon from '../markers/icon.js';
 import SearchBar from '../markers/searchbar.js';
@@ -10,8 +11,8 @@ import {bindActionCreators} from 'redux'
 import {setWine,setSearch} from '../../redux/actions'
 import {connect} from 'react-redux'
 function mapStateToProps(state,props){
-
-  let cepages = state.wine.region ? alasql('SELECT DISTINCT cepage, cepage as label  FROM ? WHERE region = "'+state.wine.region+'" ORDER BY cepage ASC ' ,[raw]) :
+  let region = state[props.navigation.getParam('search') == true ? 'search' : 'wine'].region
+  let cepages = region ? alasql('SELECT DISTINCT cepage, cepage as label  FROM ? WHERE region = "'+region+'" ORDER BY cepage ASC ' ,[raw]) :
                     alasql('SELECT DISTINCT cepage, cepage as label FROM ? ORDER BY cepage ASC ' ,[raw])
 
   cepages.forEach((r,index) => r.key = index.toString())
@@ -19,7 +20,7 @@ function mapStateToProps(state,props){
   return{
     cepages : cepages,
     search : props.navigation.getParam('search') == true,
-    selected : state.wine.cepage || []
+    selected : state[props.navigation.getParam('search') == true ? 'search' : 'wine'].cepage || [],
   }
 }
 function matchDispatchToProps(dispatch){
@@ -55,7 +56,7 @@ class Cepage extends React.PureComponent {
   }
 
 
-  _keyExtractor = (item, index) => item.key;
+  _keyExtractor = (item, index) => item.key.toString();
 
   _onPressItem = (id: string) => {
 
@@ -85,7 +86,7 @@ class Cepage extends React.PureComponent {
 
     return (
 
-      <SafeAreaView style={{flex:1}}>
+      <View style={{flex:1,backgroundColor:'white',paddingTop:30,}}>
           <View
             style={{
 
@@ -114,10 +115,23 @@ class Cepage extends React.PureComponent {
               renderItem={this._renderItem}
             />
             <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Fermer"
-          />
-        </SafeAreaView>
+                style={{
+                  color:'red',
+                  margin:10,
+                  marginHorizontal:20,
+                  height:40,
+                  backgroundColor: "#D72032", borderRadius: 20
+                }}
+                buttonStyle={{
+                  fontSize:14,
+                  color:'white',
+                  backgroundColor:'transparent',
+                  padding:0
+                }}
+              onPress={() => this.props.navigation.goBack()}
+              content="Fermer"
+            />
+      </View>
     );
   }
 }

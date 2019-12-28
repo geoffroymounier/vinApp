@@ -3,6 +3,8 @@ import {Platform, StyleSheet, Button,Text,Dimensions, View,Image,ScrollView,Keyb
 import {connect} from 'react-redux'
 import {SafeAreaView} from 'react-navigation'
 import {bindActionCreators} from 'redux';
+const arrowRight = require('../assets/arrow-right.png')
+import {images,editFile} from 'styles'
 import {colors as _colors,cepageValues,accordsValues,json} from '../components/array/description'
 import MultiSlider from '@ptomasroos/react-native-multi-slider'
 import CustomMarker from '../components/markers/customMarker'
@@ -25,7 +27,8 @@ const deleteIcon = <Image source={require('../assets/times.png')} color='#515151
 class Filter extends React.Component {
   static navigationOptions = ({ navigation  }) => {
     return {
-    headerRight: null
+      headerRight: null,
+      headerTitle:'Recherche détaillée'
     }
   }
   constructor(props){
@@ -38,7 +41,6 @@ class Filter extends React.Component {
   }
   triggerSearch(){
     this.props.resetResults()
-    this.props.fetchSearch(this.props.wine)
     this.props.navigation.navigate('results')
   }
   componentDidMount(){
@@ -83,16 +85,15 @@ class Filter extends React.Component {
 
           <TouchableOpacity onPress={()=>this.refs.domaine.focus()} style={styles.TouchableOpacity}>
             <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-              <Text style={{...styles.title,color:domain == '' ? 'lightgray' : void 0}}>Domaine : </Text>
-              <TextInput ref={'domaine'} value={domain} placeholder={'Non Précisé'} style={{fontSize:16}} onChangeText={(domain) => this.props.setSearch({domain})}/>
+              <Text style={{...styles.label}}>Domaine : </Text>
+              <TextInput ref={'domaine'} value={domain} placeholder={'Non Précisé'} style={styles.title} onChangeText={(domain) => this.props.setSearch({domain})}/>
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={()=>this.props.navigation.navigate('country',{search:true})} style={styles.TouchableOpacity}>
             <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
               <View style={{flex:1,flexDirection:'row',justifyContent:'flex-start',alignItems:'center'}}>
-
-                <Text style={{...styles.title,color:country == '' ? 'lightgray' : void 0}}>Pays : </Text>
+                <Text style={{...styles.label}}>Pays : </Text>
               </View>
               <Text style={styles.title}>{country || "" }</Text>
             </View>
@@ -101,7 +102,7 @@ class Filter extends React.Component {
             <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
               <View style={{flex:1,flexDirection:'row',justifyContent:'flex-start',alignItems:'center'}}>
 
-                <Text style={{...styles.title,color:region == '' ? 'lightgray' : void 0}}>Region :</Text>
+                <Text style={{...styles.label}}>Region :</Text>
               </View>
               <Text
                 style={styles.title}
@@ -111,19 +112,32 @@ class Filter extends React.Component {
           <TouchableOpacity onPress={()=>this.props.navigation.navigate('appelation',{search:true})} style={styles.TouchableOpacity}>
             <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
               <View style={{flex:1,flexDirection:'row',justifyContent:'flex-start',alignItems:'center'}}>
-
-                <Text style={{...styles.title,color:appelation == '' ? 'lightgray' : void 0}}>Indication Géographique :</Text>
+                <Text style={{...styles.label}}>Indication Géographique :</Text>
               </View>
-              <Text
-                style={styles.title}
-                >{appelation || "" }</Text>
+              <Text style={styles.title}>{appelation || "" }</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('cepage',{search:true})}
+            style={styles.TouchableOpacity}>
+            <View style={{flex:1,flexDirection:'row',justifyContent:'space-between'}}>
+              <Text style={{...styles.label,alignSelf:'flex-start'}}>{cepageValues.placeholder}</Text>
+              <View style={{flex:1,flexWrap:'wrap',flexDirection:'row',}}>
+              {cepage.map((e,i) => (
+                <View key={i} style={{flexDirection:'row',alignItems:'center',borderWidth:1,borderColor:'gray',borderRadius:15,padding:5,margin:3}} >
+                    <Text style={{color:'#515151',fontSize:15,fontWeight:'600'}}>{e}</Text>
+                </View>
+              )
+              )}
+              </View>
+
             </View>
           </TouchableOpacity>
           <TouchableOpacity
             onPress = {()=>this.setState({priceActive:!priceActive})}
             style={styles.TouchableOpacity}>
             <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-              <Text style={{...styles.title,color:!priceActive ? 'lightgray' : void 0}}>Prix: </Text>
+              <Text style={{...styles.label,color:!priceActive ? 'lightgray' : "#6D6D6D"}}>Prix: </Text>
                 <MultiSlider
                   min={0}
                   values={[minPrice,maxPrice]}
@@ -150,7 +164,7 @@ class Filter extends React.Component {
             onPress = {()=>this.setState({yearActive:!yearActive})}
             style={styles.TouchableOpacity}>
             <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-              <Text style={{...styles.title,color:!yearActive ? 'lightgray' : void 0}}>Année : </Text>
+              <Text style={{...styles.label,color:!yearActive ? 'lightgray' : "#6D6D6D"}}>Année : </Text>
                 <MultiSlider
                   min={1950}
                   values={[minYear,maxYear]}
@@ -177,7 +191,7 @@ class Filter extends React.Component {
             onPress = {()=>this.setState({apogeeActive:!apogeeActive})}
             style={styles.TouchableOpacity}>
             <View style={{flex:1,flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-              <Text style={{...styles.title,color:!apogeeActive ? 'lightgray' : void 0}}>Apogée : </Text>
+              <Text style={{...styles.label,color:!apogeeActive ? 'lightgray' : "#6D6D6D"}}>Apogée : </Text>
                 <MultiSlider
                   min={2018}
                   values={[minApogee,maxApogee]}
@@ -200,57 +214,21 @@ class Filter extends React.Component {
             </View>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('cepage',{search:true})}
-            style={styles.TouchableOpacity}>
-            <View style={{flex:1,flexDirection:'row',justifyContent:'space-between'}}>
-              <Text style={{...styles.undertitle,alignSelf:'flex-start'}}>{cepageValues.placeholder}</Text>
-              <View style={{flex:1,flexWrap:'wrap',flexDirection:'row',}}>
-              {cepage.map((e,i) => (
-                <View key={i} style={{flexDirection:'row',alignItems:'center',borderWidth:1,borderColor:'gray',borderRadius:15,padding:5,margin:3}} >
-                    <Text style={{color:'#515151',fontSize:15,fontWeight:'600'}}>{e}</Text>
-                </View>
-              )
-              )}
-              </View>
 
-            </View>
-          </TouchableOpacity>
-
-          {/* <TouchableOpacity
-            onPress={()=>this.setState({modalPastille:'modalPastille'})}
-            style={styles.TouchableOpacity}>
-            <View style={{flex:1,flexDirection:'row',alignItems:'center',alignSelf:'baseline',flexWrap: "wrap",paddingVertical:5}}>
-              <Text style={{...styles.title,color:pastilles.length == 0 ? 'lightgray' : void 0}}>Moments</Text>
-
-              {pastilles.map((e,i) => {
-              return (
-                <View key={i} style={{flexDirection:'row',alignItems:'center',backgroundColor:'#bababa',borderRadius:15,marginHorizontal:5}} >
-                  <Icon name="times" size={20} color='black'
-                    onPress={() => {
-                    let newArray = pastilles
-                    newArray.splice(i,1)
-                    this.setState({pastilles:newArray})
-                  }}
-                   style={{alignSelf:'center',paddingLeft:7}}/>
-                  <Chip style={{backgroundColor:'transparent'}}>{pastillesValues.values[e]}</Chip>
-                </View>
-              )
-              })}
-            </View>
-          </TouchableOpacity> */}
-
-
-          <View style={{...styles.container,flexDirection:'row',width:'100%',alignItems:'flex-start',backgroundColor:"#bababa",borderBottomWidth:1,borderBottomColor:"#333333",borderTopWidth:1,borderTopColor:"#333333"}}>
-            <Text style={{...styles.title,fontWeight:'800'}}>{'ACCORDS'}</Text>
+          <View style={{...styles.container,marginVertical:20}}>
+            <Text style={{...styles.title,fontSize:26,color:"#6D6D6D"}}>{'Accords'}</Text>
           </View>
           {Object.keys(accordsValues).map((accords,index) => {
             let accord = accordsValues[accords]
             return (
               <TouchableOpacity
                 onPress={()=>this.props.navigation.navigate('accords',{keyValue:accords,search:true})}
-                key={index} style={{width:"100%",flexDirection:'row',alignSelf:'baseline',flexWrap: "wrap",alignItems:'center',paddingVertical:10}}>
-                <Image  source={accord.icon} style={{marginHorizontal:10,width:28,height:28}}/>
+                key={index} style={{...styles.TouchableOpacity,flexWrap:'wrap',justifyContent:'flex-start',alignItems:'center',paddingVertical:10,marginVertical:5,backgroundColor:'white'}}>
+                <View style={{flexDirection:'row'}}>
+                  <Image  source={accord.icon} style={{marginHorizontal:10,width:24,height:24,tintColor:"#E82D49"}}/>
+                  <Text style={styles.label}>{accord.label}</Text>
+                  <View style={{width:30,height:15,alignSelf:'center'}}><Image source={arrowRight} style={{...images.icon,tintColor:'gray'}}/></View>
+                </View>
               {(this.props.wine[accords]||[]).map((e,i) => {
                 return (
                   <View key={i}
@@ -268,19 +246,20 @@ class Filter extends React.Component {
             )
 
           })}
-          <View style={{...styles.container,flexDirection:'row',width:'100%',alignItems:'flex-start',backgroundColor:"#eee5da",
-            }}>
-            <Text style={{...styles.title,fontWeight:'800'}}>{'DÉGUSTATION'}</Text>
+          <View style={{...styles.container,marginVertical:20}}>
+            <Text style={{...styles.title,fontSize:26,color:"#6D6D6D"}}>{'Dégustation'}</Text>
           </View>
           {Object.keys(json).map((caracts,index) => {
             let caract = json[caracts]
             return (
               <TouchableOpacity
                 onPress={()=>this.props.navigation.navigate('aromes',{keyValue:caracts,search:true})}
-                key={index} style={{width:"100%",flexDirection:'row',alignSelf:'baseline',flexWrap: "wrap",alignItems:'center',paddingVertical:10}}>
-
-
-                <Image source={caract.icon} style={{marginHorizontal:10,width:25,height:25}}/>
+                key={index} style={{...styles.TouchableOpacity,flexWrap:'wrap',justifyContent:'flex-start',alignItems:'center',paddingVertical:10,marginVertical:5,backgroundColor:'white'}}>
+                <View style={{flexDirection:'row'}}>
+                  <Image  source={caract.icon} style={{marginHorizontal:10,width:24,height:24,tintColor:"#E82D49"}}/>
+                  <Text style={styles.label}>{caract.label}</Text>
+                  <View style={{width:30,height:15,alignSelf:'center'}}><Image source={arrowRight} style={{...images.icon,tintColor:'gray'}}/></View>
+                </View>
               {(this.props.wine[caracts]||[]).map((e,i) => {
                 return (
                   <View key={i}
@@ -307,12 +286,14 @@ class Filter extends React.Component {
       </SafeAreaView>
 
       </ScrollView>
-      <View style={{position:'absolute',zIndex:3,bottom:0,left:0,alignItems:'center',width:'100%',height:55,flex:1,borderTopWidth:1,borderColor:'#bababa',backgroundColor:'#FEFDF8'}}>
-        <TouchableOpacity onPress={() => this.triggerSearch()} style={{flexDirection:'row',justifyContent:'center',alignItems:'center',height:55,marginBottom:5,width:1.1*width,backgroundColor:"#530000"}}>
-
-            <Text style={{color:'#FEFDF8',fontWeight:'600',fontSize:16}}>CHERCHER</Text>
-
+      <View style={{position:'absolute',zIndex:3,bottom:0,left:0,alignItems:'center',width:'100%'}}>
+        <TouchableOpacity
+          style={styles.buttonView}
+          onPress={() => this.triggerSearch()}
+          >
+            <Text style={styles.buttonText}>Chercher</Text>
         </TouchableOpacity>
+
       </View>
 
     </KeyboardAvoidingView>
@@ -326,75 +307,109 @@ class Filter extends React.Component {
 const pickerStyle = {
     viewContainer:{alignSelf:'center',paddingHorizontal:0}
   }
-const styles = StyleSheet.create({
-  TouchableOpacity : {flexDirection:'row',justifyContent:'space-between',alignItems:'center',minHeight:50,paddingHorizontal:10,borderBottomWidth:1,borderBottomColor:"#333333"},
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+  const styles = StyleSheet.create({
+    buttonView : {
+      marginVertical:10,width:"80%",alignSelf:'center',justifyContent:'center',height:50,borderRadius:25,backgroundColor:'#9F041B'
+    },
+    buttonText:{
+      textAlign: "center",
+      padding: 10,
+      color: "white",
+      fontWeight: "bold",
+      fontSize: 16
+    },
+    TouchableOpacity : {
+      flexDirection:'row',
+      width:'100%',
+      justifyContent:'space-between',alignItems:'center',
+      padding:6,
+      marginVertical:5,backgroundColor:'white'
+    },
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
 
-  },
-  label:{
-    alignSelf:'center',
-    fontSize: 20,
-    textAlign: 'left',
-    marginRight:20,
-  },
 
-  textInputPicker:{
-    color:'#262626',
-    // padding:10,
+    },
+    label:{
+      color:'#6D6D6D',
+      fontSize: 16,
+      marginVertical:5,
+      fontFamily:'ProximaNova-Regular',
+      flex:1
 
-    // paddingBottom:8,
-    fontSize:16,
-    justifyContent:'center',
-    alignSelf:'center',
-    alignItems:'center'
-  },
-  textInput:{
-    borderWidth:0,
+    },
+    textInputLabel : {
+      color:'#6D6D6D',
+      fontFamily:'ProximaNova-Regular',
+      // padding:10,
 
-    borderColor:'transparent'
-  },
-  chip:{
-    margin:5,
-  },
-  title: {
-    fontSize: 18,
-    alignSelf:'flex-start',
-    textAlign: 'left',
-    margin: 10,
-  },
-  domain: {
-    fontSize: 22,
-    color:"#262626",
-    alignSelf:'flex-start',
-    textAlign: 'left',
-    marginLeft: 10,
-    marginRight: 10,
-  },
-  appelation: {
-    color:"#262626",
-    fontWeight:"800",
-    fontSize: 24,
-    alignSelf:'flex-start',
-    textAlign: 'left',
-    marginHorizontal: 10,
-    marginVertical: 3,
-  },
-  undertitle: {
-    fontSize: 16,
-    alignSelf:'center',
-    alignItems:'center',
-    justifyContent:'center',
-    textAlign: 'left',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
-});
+      // paddingBottom:8,
+      fontSize:14,
+      justifyContent:'center',
+      alignSelf:'flex-end',
+      alignItems:'center'
+    },
+    textInputPicker:{
+      color:'#464646',
+      fontFamily:'ProximaNova-Bold',
+      textAlign:'right',
+      flexWrap:'wrap',
+      flexDirection:'row',
+      width:100,
+      fontSize:14,
+      justifyContent:'center',
+      alignSelf:'flex-end',
+      alignItems:'center'
+    },
+    textInput:{
+      borderWidth:0,
 
+      borderColor:'transparent'
+    },
+    chip:{
+      margin:5,
+    },
+    title: {
+
+      color: "#454545",
+      fontSize: 16,
+      fontFamily:'ProximaNova-Regular',
+      alignSelf:'flex-start',
+      textAlign: 'left',
+      margin:5
+    },
+    domain: {
+      fontSize: 20,
+      color: "#454545",
+      alignSelf:'flex-start',
+      textAlign: 'left',
+      marginLeft: 10,
+      marginRight: 10,
+    },
+    appelation: {
+      color: "#454545",
+      fontSize: 19,
+      fontFamily:"ProximaNova-Bold",
+      alignSelf:'flex-start',
+      textAlign: 'left',
+
+      marginVertical: 3,
+    },
+    undertitle: {
+      fontSize: 16,
+      alignSelf:'center',
+      alignItems:'center',
+      fontFamily:"ProximaNova-Semibold",
+      justifyContent:'center',
+      textAlign: 'left',
+      margin: 10,
+    },
+    instructions: {
+      textAlign: 'center',
+      color: '#333333',
+      marginBottom: 5,
+    },
+  });
 export default connect(mapStateToProps,matchDispatchToProps)(Filter)

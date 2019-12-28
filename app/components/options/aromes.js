@@ -1,21 +1,21 @@
 import React, {Component} from 'react';
-import {FlatList,Button,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
-import Checkbox from '../markers/checkbox.js';
+import {FlatList,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
+import Checkbox from '../markers/checkbox2.js';
+import Button from '../markers/button.js';
 import {SafeAreaView} from 'react-navigation'
 import Icon from '../markers/icon.js';
 import SearchBar from '../markers/searchbar.js';
 import {json} from '../array/description'
-// import alasql from 'alasql'
 import {bindActionCreators} from 'redux'
 import {setWine,setSearch} from '../../redux/actions'
 import {connect} from 'react-redux'
 function mapStateToProps(state,props){
-  //
-  // let cepages = state.wine.region ? alasql('SELECT DISTINCT cepage, cepage as label  FROM ? WHERE region = "'+state.wine.region+'" ORDER BY cepage ASC ' ,[raw]) :
-  //                   alasql('SELECT DISTINCT cepage, cepage as label FROM ? ORDER BY cepage ASC ' ,[raw])
-  //
-  let aromesRaw = json[props.navigation.getParam('keyValue')].values
+  let type = props.navigation.getParam('search') == true ? 'search' : 'wine'
+  let values = json[props.navigation.getParam('keyValue')].values
+  let aromesRaw = state[type].color ? values[state[type].color]
+  : [...new Set([...values.red,...values.white,...values.rose])]
   let aromes = []
+
   aromesRaw.forEach((arome,index) => aromes.push({
       label : arome,
       key : index
@@ -24,7 +24,7 @@ function mapStateToProps(state,props){
   return{
     aromes:aromes,
     search : props.navigation.getParam('search') == true,
-    selected : state.wine[props.navigation.getParam('keyValue')] || []
+    selected : state[type][props.navigation.getParam('keyValue')] || [],
   }
 }
 function matchDispatchToProps(dispatch){
@@ -62,7 +62,7 @@ class Aromes extends React.PureComponent {
   }
 
 
-  _keyExtractor = (item, index) => item.key;
+  _keyExtractor = (item, index) => item.key.toString();
 
   _onPressItem = (label: string) => {
 
@@ -92,7 +92,7 @@ class Aromes extends React.PureComponent {
 
     return (
 
-      <SafeAreaView style={{flex:1}}>
+      <View style={{flex:1,backgroundColor:'white',paddingTop:30,}}>
           <View
             style={{
               flexDirection:'row',
@@ -120,10 +120,23 @@ class Aromes extends React.PureComponent {
               renderItem={this._renderItem}
             />
             <Button
-            onPress={() => this.props.navigation.goBack()}
-            title="Fermer"
-          />
-        </SafeAreaView>
+                style={{
+                  color:'red',
+                  margin:10,
+                  marginHorizontal:20,
+                  height:40,
+                  backgroundColor: "#D72032", borderRadius: 20
+                }}
+                buttonStyle={{
+                  fontSize:14,
+                  color:'white',
+                  backgroundColor:'transparent',
+                  padding:0
+                }}
+              onPress={() => this.props.navigation.goBack()}
+              content="Fermer"
+            />
+      </View>
     );
   }
 }

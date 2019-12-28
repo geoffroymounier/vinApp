@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   },
   cartoucheRight: {
     flexDirection:'row',flex:1,justifyContent:'flex-end',alignItems:'flex-start',
-    paddingVertical:15,borderBottomWidth:1,borderColor:"#F5F5F5"
+    paddingVertical:10,borderBottomWidth:1,borderColor:"#F5F5F5"
   }
 })
 export default styles
