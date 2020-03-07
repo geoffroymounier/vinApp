@@ -1,0 +1,26 @@
+{
+    "master": {
+        "awscloudformation": {
+            "AuthRoleName": "vino-master-20200223110850-authRole",
+            "UnauthRoleArn": "arn:aws:iam::831303585030:role/vino-master-20200223110850-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::831303585030:role/vino-master-20200223110850-authRole",
+            "Region": "us-east-1",
+            "DeploymentBucketName": "vino-master-20200223110850-deployment",
+            "UnauthRoleName": "vino-master-20200223110850-unauthRole",
+            "StackName": "vino-master-20200223110850",
+            "StackId": "arn:aws:cloudformation:us-east-1:831303585030:stack/vino-master-20200223110850/7dab4850-5624-11ea-afbc-120fbf0f0187",
+            "AmplifyAppId": "d1d3yu6o6j9rdz"
+        },
+        "categories": {
+            "auth": {
+                "vinoff0142d2": {
+                    "facebookAppIdUserPool": "649559492141498",
+                    "facebookAppSecretUserPool": "59a21ce5eacfd0858a596df4eb19cc67",
+                    "googleAppIdUserPool": "492975335644-4okinlf94v3gfgjt4fjnbf8hlv5pt2uo.apps.googleusercontent.com",
+                    "googleAppSecretUserPool": "7EvA0M2LEQ77_3P4_LMSf2Xz",
+                    "hostedUIProviderCreds": "[{\"ProviderName\":\"Facebook\",\"client_id\":\"649559492141498\",\"client_secret\":\"59a21ce5eacfd0858a596df4eb19cc67\"},{\"ProviderName\":\"Google\",\"client_id\":\"492975335644-4okinlf94v3gfgjt4fjnbf8hlv5pt2uo.apps.googleusercontent.com\",\"client_secret\":\"7EvA0M2LEQ77_3P4_LMSf2Xz\"}]"
+                }
+            }
+        }
+    }
+}

@@ -5,6 +5,7 @@ import { AccessToken, LoginManager } from 'react-native-fbsdk';
 import {AsyncStorage,Linking,Animated,Platform, FlatList,TouchableHighlight,StyleSheet, Text, View,Image,ScrollView,KeyboardAvoidingView,TextInput,Picker,TouchableOpacity,Dimensions} from 'react-native';
 import {bindActionCreators} from 'redux'
 import {login,testAPI} from '../functions/api'
+import { Auth } from 'aws-amplify';
 
 import {connect} from 'react-redux'
 function mapStateToProps(state){
@@ -36,10 +37,12 @@ class Login extends React.Component {
   async googleLogin() {
 
     try {
-      GoogleSignin.configure();
-      await GoogleSignin.hasPlayServices();
-      const data = await GoogleSignin.signIn();
-      await login(data,'google')
+      const authGoogle = await Auth.federatedSignIn({provider: 'Google'})
+      // GoogleSignin.configure();
+      // await GoogleSignin.hasPlayServices();
+      // const data = await GoogleSignin.signIn();
+      // await login(data,'google')
+      console.log(authGoogle)
       this.props.navigation.navigate('AuthLoading')
     } catch (error) {
 
@@ -59,18 +62,21 @@ class Login extends React.Component {
 
 
     try {
+      Auth.federatedSignIn({provider: 'Facebook'})
+      // const authFacebook= await Auth.federatedSignIn({provider: 'Facebook'})
+      // console.log(authFacebook)
       // RNFBSDK  asks the user to authorize and share email and publicprofile
-      const result = await LoginManager.logInWithReadPermissions(['public_profile', 'email']);
-      // refusing to share
-      if (result.isCancelled) {
-        return
-      }
-      const data = await AccessToken.getCurrentAccessToken();
-      if (!data) {
-        throw new Error('Something went wrong obtaining the users access token');
-      }
-      await login(data,'facebook')
-      this.props.navigation.navigate('AuthLoading')
+      // const result = await LoginManager.logInWithReadPermissions(['public_profile', 'email']);
+      // // refusing to share
+      // if (result.isCancelled) {
+      //   return
+      // }
+      // const data = await AccessToken.getCurrentAccessToken();
+      // if (!data) {
+      //   throw new Error('Something went wrong obtaining the users access token');
+      // }
+      // await login(data,'facebook')
+      // this.props.navigation.navigate('AuthLoading')
     } catch (e) {
       console.error(e);
     }

@@ -5,6 +5,7 @@ import styles from '../styles'
 import {getUser,fetchCredentials,fetchCellars,login} from '../functions/api'
 import {connect} from 'react-redux'
 import io from 'socket.io-client';
+import { Auth, Hub } from 'aws-amplify';
 const { height, width } = Dimensions.get('window');
 
 import {bindActionCreators} from 'redux'
@@ -46,13 +47,37 @@ class AuthLoading extends React.Component {
         })
     })
   }
+  async _checkIfAuthenticated() {
+    let currentSession = null;
+    try {
+      currentSession = await Auth.currentSession();
+    } catch(err) {
+      console.log(err);
+    }
+    console.log(currentSession)
+    this.props.navigation.navigate(currentSession ? 'cellars' : 'login');
+  };
   async componentDidMount() { //// AUTH PROCESS
+    this._checkIfAuthenticated();
+    Hub.listen('auth', async (data) => {
+      console.log(data.payload)
+      switch (data.payload.event) {
 
-    this.fetchCred().then(()=>{
-      this.props.navigation.navigate("cellars")
-    }).catch(async e=>{
-      this.props.navigation.navigate("login")
-    })
+        case 'signIn':
+          this.props.navigation.navigate('cellars');
+          break;
+        case 'signOut':
+          this.props.navigation.navigate('login');
+          break;
+        default:
+          break;
+      }
+    });
+    // this.fetchCred().then(()=>{
+    //   this.props.navigation.navigate("cellars")
+    // }).catch(async e=>{
+    //   this.props.navigation.navigate("login")
+    // })
   }
 
   render() {

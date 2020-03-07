@@ -62,6 +62,7 @@ class Cellars extends React.Component {
   };
 
   componentDidMount(){
+    console.log('entered cellars')
     this.props.fetchCellars().then(()=>this.setState({refreshing:false}))
     this.props.navigation.addListener('didFocus',
       payload => {

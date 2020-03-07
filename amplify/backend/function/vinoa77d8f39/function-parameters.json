@@ -1,0 +1,12 @@
+{
+    "permissions": {
+        "auth": {
+            "vinoff0142d2": [
+                "create",
+                "read",
+                "update",
+                "delete"
+            ]
+        }
+    }
+}

@@ -889,7 +889,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 37X8JR2Q7Q;
+						DevelopmentTeam = QTU9R32TQZ;
 						SystemCapabilities = {
 							com.apple.Keychain = {
 								enabled = 1;
@@ -1567,11 +1567,13 @@
 				CODE_SIGN_ENTITLEMENTS = vino/vino.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = 37X8JR2Q7Q;
+				DEVELOPMENT_TEAM = QTU9R32TQZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"${PODS_ROOT}/GoogleSignIn/Frameworks",
 					"$(PROJECT_DIR)/Frameworks/",
+					"$(HOME)/Documents/FacebookSDK",
+					"$(PROJECT_DIR)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1584,7 +1586,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.mkm.vinologi;
+				PRODUCT_BUNDLE_IDENTIFIER = org.mkm.vinologie;
 				PRODUCT_NAME = vino;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -1597,11 +1599,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = vino/vino.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 37X8JR2Q7Q;
+				DEVELOPMENT_TEAM = QTU9R32TQZ;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"${PODS_ROOT}/GoogleSignIn/Frameworks",
 					"$(PROJECT_DIR)/Frameworks/",
+					"$(HOME)/Documents/FacebookSDK",
+					"$(PROJECT_DIR)",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1614,7 +1618,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.mkm.vinologi;
+				PRODUCT_BUNDLE_IDENTIFIER = org.mkm.vinologie;
 				PRODUCT_NAME = vino;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

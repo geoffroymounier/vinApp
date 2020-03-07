@@ -1,0 +1,41 @@
+{
+    "paths": [
+        {
+            "name": "/wines",
+            "lambdaFunction": "vinoa77d8f39",
+            "privacy": {
+                "private": true,
+                "auth": [
+                    "/POST",
+                    "/GET",
+                    "/PUT",
+                    "/PATCH",
+                    "/DELETE"
+                ]
+            }
+        }
+    ],
+    "resourceName": "api3795b2f9",
+    "apiName": "api3795b2f9",
+    "functionArns": [
+        {
+            "lambdaFunction": "vinoa77d8f39"
+        }
+    ],
+    "privacy": {
+        "auth": 1,
+        "unauth": 0,
+        "authRoleName": "vino-master-20200223110850-authRole",
+        "unAuthRoleName": "vino-master-20200223110850-unauthRole"
+    },
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "vinoa77d8f39",
+            "attributes": [
+                "Name",
+                "Arn"
+            ]
+        }
+    ]
+}

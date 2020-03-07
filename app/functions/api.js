@@ -1,10 +1,10 @@
 import {setUser,logOut,removeCellars,removeWines,setWines,setCellars,setResults} from '../redux/actions'
 import {getCredentials,resetKeychain,rememberEmailPassword} from './keychainFunctions'
 import NavigationService from './navigationService'
-
+import { Auth, API } from 'aws-amplify';
 import io from 'socket.io-client';
-// const URL =  "https://vinologie.ovh/api"
-const URL = "http://localhost:3000/api"
+const URL =  "http://13.58.96.124:3000/api"
+// const URL = "http://localhost:3000/api"
 let token="";
 let accessToken = "";
 // var socket;
@@ -42,8 +42,9 @@ function fetchSearch(query = {}){
 function fetchWines(wineId = '',query = {}){
   return function(dispatch) {
     return new Promise(async function(resolve,reject){
-      fetchData("GET","/wines/" + wineId,query)
+      API.get('api3795b2f9', '/wines')
       .then(array=>{
+        console.log(array)
         dispatch(setWines(array))
         resolve();
       })
@@ -138,12 +139,17 @@ function saveCellar(cellar,cellarId=''){
 function fetchCellars(cellarId=''){
   return function(dispatch) {
     return new Promise(async function(resolve,reject){
-      fetchData("GET","/cellars/"+cellarId)
+      // fetchData("GET","/cellars/"+cellarId)
+      console.log('will call wines')
+      API.get('api3795b2f9', '/wines')
       .then(array=>{
+        console.log(array)
         dispatch(setCellars(array))
         resolve();
       })
-      .catch(e=>reject(e))
+      .catch(e=>{
+        console.log(e)
+        reject(e)})
     })
   }
 }
@@ -203,7 +209,7 @@ function askForConfirmation(email){
 function logOutUser(){
   return function(dispatch) {
     return new Promise(async function(resolve,reject){
-      fetchData("GET","/logout").then((res)=>{
+      Auth.signOut().then((res)=>{
         resetKeychain()
         dispatch(logOut());
         resolve()
@@ -231,6 +237,7 @@ function login(data,passport,name){
     console.log(query)
     fetchData("POST","/auth/"+passport+"/token",query,body)
     .then(async function(res){
+      console.log(res)
       await rememberEmailPassword(query,passport)
       // if (data && !passport) await rememberEmailPassword(res.userId,res.accessToken)
       resolve()
@@ -285,7 +292,7 @@ function fetchData( method, path, params, body){
 
             return fetchData(method,path,params,body)
           }catch(e){
-
+            console.log(e)
             reject("unauthorized, can't re-login")
           }
           break;

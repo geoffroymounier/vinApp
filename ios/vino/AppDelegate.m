@@ -13,11 +13,12 @@
 #import <Firebase.h>
 #import <RNGoogleSignin/RNGoogleSignin.h>
 #import <FBSDKCoreKit/FBSDKCoreKit.h>
+#import <React/RCTLinkingManager.h>
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  [FIRApp configure]; 
+  [FIRApp configure];
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
                                                    moduleName:@"vino"
@@ -32,23 +33,40 @@
   [self.window makeKeyAndVisible];
   return YES;
 }
+- (BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity
+ restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler
+{
+ return [RCTLinkingManager application:application
+                  continueUserActivity:userActivity
+                    restorationHandler:restorationHandler];
+}
+// - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+//     sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+
+  // BOOL handledFB = [[FBSDKApplicationDelegate sharedInstance] application:application
+  //   openURL:url
+  //   sourceApplication:sourceApplication
+  //   annotation:annotation
+  // ];
+  //
+  // BOOL handledGoogle = [RNGoogleSignin application:application
+  //   openURL:url
+  //   sourceApplication:sourceApplication
+  //   annotation:annotation
+  // ];
+
+
+//   return [RCTLinkingManager application:application openURL:url
+//                       sourceApplication:sourceApplication annotation:annotation];
+//
+//   // return handledFB || handledGoogle;
+// }
+
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
-    sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-
-  BOOL handledFB = [[FBSDKApplicationDelegate sharedInstance] application:application
-    openURL:url
-    sourceApplication:sourceApplication
-    annotation:annotation
-  ];
-
-  BOOL handledGoogle = [RNGoogleSignin application:application
-    openURL:url
-    sourceApplication:sourceApplication
-    annotation:annotation
-  ];
-
-
-  return handledFB || handledGoogle;
+  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
+{
+  return [RCTLinkingManager application:application openURL:url
+                      sourceApplication:sourceApplication annotation:annotation];
 }
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
