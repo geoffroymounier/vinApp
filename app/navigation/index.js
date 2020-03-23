@@ -1,7 +1,7 @@
 import React from 'react'
 // import styles from '../styles'
 import {View,ScrollView,TouchableOpacity, Text,Button,Image,Modal } from 'react-native'
-import {DrawerItems, SafeAreaView, createStackNavigator, createDrawerNavigator , createAppContainer , createSwitchNavigator, createBottomTabNavigator} from 'react-navigation'
+import {DrawerItems, SafeAreaView, createStackNavigator, createDrawerNavigator , createAppContainer , createSwitchNavigator, createBottomTabNavigator} from '@react-navigation/native'
 import Login from '../views/login'
 import SignIn from '../views/signin'
 import SignUp from '../views/signup'

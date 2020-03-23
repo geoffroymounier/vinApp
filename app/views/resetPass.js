@@ -1,7 +1,5 @@
-import { GoogleSignin,statusCodes } from 'react-native-google-signin';
 import React from "react";
 import LinearGradient from 'react-native-linear-gradient'
-import { AccessToken, LoginManager } from 'react-native-fbsdk';
 import {Alert,AsyncStorage,InteractionManager,Linking,Animated,Platform, FlatList,TouchableHighlight,StyleSheet, Text, View,Image,ScrollView,KeyboardAvoidingView,TextInput,Picker,TouchableOpacity,Dimensions} from 'react-native';
 import {bindActionCreators} from 'redux'
 import {resetPass} from '../functions/api'

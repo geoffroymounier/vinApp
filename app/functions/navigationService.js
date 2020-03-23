@@ -1,4 +1,4 @@
-import { NavigationActions,StackActions } from 'react-navigation';
+import { NavigationActions,StackActions } from '@react-navigation/native';
 
 let _navigator;
 var activeStack = "_cellar";

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Button,Text,Dimensions, View,Image,ScrollView,KeyboardAvoidingView,TextInput,TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux'
-import {SafeAreaView} from 'react-navigation'
+import {SafeAreaView} from '@react-navigation/native'
 import {bindActionCreators} from 'redux';
 const arrowRight = require('../assets/arrow-right.png')
 import {images,editFile} from 'styles'

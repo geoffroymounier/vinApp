@@ -1,6 +1,6 @@
 import React from 'react'
 import {TouchableOpacity, Image,TextInput,View} from 'react-native'
-import {SafeAreaView} from 'react-navigation'
+import {SafeAreaView} from '@react-navigation/native'
 const search = require('../../assets/search.png')
 const times = require('../../assets/times.png')
 const filter = require('../../assets/filter.png')

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import LinearGradient from 'react-native-linear-gradient'
-import {NavigationActions,SafeAreaView} from 'react-navigation';
+import {NavigationActions,SafeAreaView} from '@react-navigation/native';
 import { Text, View,Image, StyleSheet,TouchableOpacity,ImageBackground} from 'react-native'
 import {bindActionCreators} from 'redux';
 import {resetWine,setSearch,resetResults} from '../../redux/actions'
