@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {FlatList,View,TouchableWithoutFeedback,Keyboard,TouchableOpacity,Modal,ScrollView,Text,Dimensions} from 'react-native';
 import Checkbox from '../markers/checkbox2.js';
 import Button from '../markers/button.js';
-import {SafeAreaView} from 'react-navigation'
+import {SafeAreaView} from '@react-navigation/native'
 import Icon from '../markers/icon.js';
 import SearchBar from '../markers/searchbar.js';
 import {json} from '../array/description'
