@@ -15,7 +15,7 @@
     "mongoose": "^5.9.2",
     "react": "16.8.3",
     "react-native": "0.59.8",
-    "react-native-fbsdk": "0.8.0",
+    "react-native-fbsdk": "3.0.0",
     "react-native-firebase-mlkit": "^0.6.2",
     "react-native-google-signin": "1.2.2",
     "react-native-image-picker": "^0.28.1",
